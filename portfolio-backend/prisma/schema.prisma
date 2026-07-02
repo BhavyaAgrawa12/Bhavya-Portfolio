@@ -1,0 +1,342 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProjectStatus {
+  LIVE
+  IN_DEVELOPMENT
+  ARCHIVED
+}
+
+enum ProjectCategory {
+  FULL_STACK
+  FRONTEND
+  BACKEND
+  ACADEMIC
+  PERSONAL
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  INTERNSHIP
+  FREELANCE
+}
+
+enum MediaType {
+  IMAGE
+  PDF
+}
+
+enum SkillCategory {
+  FRONTEND
+  BACKEND
+  DATABASE
+  DEVOPS
+  LANGUAGE
+  TOOL
+}
+
+model Admin {
+  id       String @id @default(cuid())
+  username String @unique
+  email    String @unique
+  password String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Media {
+  id String @id @default(cuid())
+
+  fileName String
+  fileUrl  String
+  mimeType String
+  fileSize Int
+  type     MediaType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profileImages       Portfolio[]     @relation("ProfileImage")
+  workspaceImages     Portfolio[]     @relation("WorkspaceImage")
+  resumes             Portfolio[]     @relation("Resume")
+  projectThumbnails   Project[]       @relation("ProjectThumbnail")
+  projectImages       ProjectImage[]
+  internshipLogos     Internship[]
+  certificationImages Certification[]
+  achievementImages   Achievement[]   @relation("AchievementImage")
+}
+
+model Portfolio {
+  id Int @id @default(1)
+
+  heroTitle       String?
+  heroSubtitle    String?
+  heroDescription String? @db.Text
+
+  aboutTitle       String?
+  aboutDescription String? @db.LongText
+
+  resumeId String?
+  resume   Media?  @relation("Resume", fields: [resumeId], references: [id])
+
+  github    String?
+  linkedin  String?
+  x         String?
+  instagram String?
+
+  email   String?
+  phone   String?
+  address String?
+
+  footerText String? @db.Text
+
+  metaTitle       String?
+  metaDescription String? @db.Text
+  keywords        String?
+
+  profileImageId   String?
+  workspaceImageId String?
+
+  profileImage Media? @relation("ProfileImage", fields: [profileImageId], references: [id])
+
+  workspaceImage Media? @relation("WorkspaceImage", fields: [workspaceImageId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileImageId])
+  @@index([workspaceImageId])
+  @@index([resumeId])
+}
+
+model Project {
+  id String @id @default(cuid())
+
+  title String
+  slug  String @unique
+
+  category ProjectCategory
+
+  featured Boolean @default(false)
+
+  status ProjectStatus
+
+  shortDescription String @db.Text
+
+  description String @db.LongText
+
+  githubUrl String?
+  liveUrl   String?
+
+  thumbnailId String?
+  thumbnail   Media?  @relation("ProjectThumbnail", fields: [thumbnailId], references: [id])
+
+  features Json?
+
+  challenges Json?
+
+  learnings Json?
+
+  displayOrder Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  images ProjectImage[]
+
+  technologies ProjectTechnology[]
+
+  @@index([category])
+  @@index([featured])
+  @@index([status])
+  @@index([slug])
+}
+
+model Technology {
+  id String @id @default(cuid())
+
+  name String @unique
+
+  iconName String?
+
+  projects ProjectTechnology[]
+}
+
+model ProjectTechnology {
+  projectId String
+
+  technologyId String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  technology Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, technologyId])
+}
+
+model ProjectImage {
+  id String @id @default(cuid())
+
+  projectId String
+
+  mediaId String
+
+  displayOrder Int @default(0)
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  media Media @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+}
+
+model Education {
+  id String @id @default(cuid())
+
+  institution String
+
+  degree String
+
+  field String?
+
+  location String?
+
+  cgpa String?
+
+  description String? @db.Text
+
+  startDate DateTime?
+
+  endDate DateTime?
+
+  displayOrder Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model Internship {
+  id String @id @default(cuid())
+
+  company String
+
+  position String
+
+  employmentType EmploymentType
+
+  location String?
+
+  description String? @db.LongText
+
+  companyWebsite String?
+
+  logoId String?
+
+  logo Media? @relation(fields: [logoId], references: [id])
+
+  startDate DateTime?
+
+  endDate DateTime?
+
+  displayOrder Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([logoId])
+}
+
+model Certification {
+  id String @id @default(cuid())
+
+  title String
+
+  issuer String
+
+  credentialId String?
+
+  credentialUrl String?
+
+  verificationUrl String?
+
+  issueDate DateTime?
+
+  certificateImageId String?
+
+  certificateImage Media? @relation(fields: [certificateImageId], references: [id])
+
+  displayOrder Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([certificateImageId])
+}
+
+model Skill {
+  id String @id @default(cuid())
+
+  name String
+
+  category SkillCategory
+
+  iconName String?
+
+  proficiency Int?
+
+  displayOrder Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model Achievement {
+  id String @id @default(cuid())
+
+  title String
+
+  description String?
+
+  date DateTime?
+
+  imageId String?
+  image   Media?  @relation("AchievementImage", fields: [imageId], references: [id])
+
+  displayOrder Int @default(0)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+}
+
+model ContactMessage {
+  id String @id @default(cuid())
+
+  name String
+
+  email String
+
+  phone String?
+
+  subject String?
+
+  message String @db.LongText
+
+  isRead Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([isRead])
+}

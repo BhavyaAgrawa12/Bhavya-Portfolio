@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+
+# Logs
+logs/
+*.log
+
+# Uploads
+public/uploads/*
+src/uploads/*
+
+!public/uploads/.gitkeep
+!src/uploads/.gitkeep
+
+# Prisma
+prisma/migrations/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
