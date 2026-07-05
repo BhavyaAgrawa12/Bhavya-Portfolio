@@ -1,8 +1,16 @@
-import { mockDelay } from './base/mockDelay';
+import { fetchAllEducation } from '../api/education.api';
 import type { EducationEntry } from '../types/portfolio';
-import { education } from '../data/education';
 
 export async function getEducation(): Promise<EducationEntry[]> {
-  await mockDelay();
-  return education;
+  const data = await fetchAllEducation();
+  return data.map((e) => ({
+    id: e.id,
+    institution: e.institution,
+    degree: `${e.degree}${e.field ? ` in ${e.field}` : ''}`,
+    location: e.location ?? undefined,
+    startDate: e.startDate ?? undefined,
+    endDate: e.endDate ?? undefined,
+    description: e.description ?? undefined,
+    coursework: [], // not stored on this model
+  }));
 }

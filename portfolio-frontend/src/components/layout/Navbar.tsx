@@ -1,28 +1,37 @@
-import { Sun, Moon, Menu, X } from "lucide-react";
-import { useState } from "react";
-import Container from "../common/Container";
-import Button from "../common/Button";
+import { Sun, Moon, Menu, X } from 'lucide-react';
+import { useState } from 'react';
+import Container from '../common/Container';
+import Button from '../common/Button';
+import { usePortfolio } from '../../hooks/usePortfolio';
+import { useTheme } from '../../context/ThemeContext';
+import { mediaUrl } from '../../lib/mediaUrl';
 
 const navLinks = [
-  { label: "Home", to: "/" },
-  { label: "About", to: "/about" },
-  { label: "Projects", to: "/projects" },
-  { label: "Experience", to: "/experience" },
-  { label: "Contact", to: "/contact" },
+  { label: 'Home', to: '/' },
+  { label: 'About', to: '/about' },
+  { label: 'Projects', to: '/projects' },
+  { label: 'Experience', to: '/experience' },
+  { label: 'Contact', to: '/contact' },
 ];
 
 export default function Navbar() {
-  const [isDark, setIsDark] = useState(true);
+  const { isDark, toggleTheme } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: portfolio } = usePortfolio();
 
-  const downloadResume = () => {
-    window.open("/resume.pdf", "_blank");
-  };
+  // Resume: prefer the PDF uploaded via admin, fall back to the static file
+  const resumeUrl = portfolio?.resume
+    ? (mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf')
+    : '/resume.pdf';
+
+  const downloadResume = () => window.open(resumeUrl, '_blank');
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/6 bg-bg-base/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-white/6 bg-[var(--color-bg-base)]/80 backdrop-blur-xl">
       <Container className="flex h-16 items-center justify-between gap-4">
-        <span className="text-lg font-bold tracking-tight">BA Logo</span>
+        <a href="/" className="flex items-center">
+          <img src="/logo.png" alt="BA Logo" className="h-9 w-auto" />
+        </a>
 
         <div className="flex items-center gap-3 md:gap-4">
           <nav className="hidden items-center gap-8 md:flex">
@@ -30,7 +39,7 @@ export default function Navbar() {
               <a
                 key={link.to}
                 href={link.to}
-                className="text-sm text-text-secondary transition-colors hover:text-text-primary"
+                className="text-sm text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text-primary)]"
               >
                 {link.label}
               </a>
@@ -45,33 +54,35 @@ export default function Navbar() {
             Download Resume
           </Button>
 
+          {/* Theme toggle — actually works now */}
           <button
-            onClick={() => setIsDark((prev) => !prev)}
-            className="glass flex h-9 w-9 items-center justify-center rounded-full text-text-secondary hover:text-text-primary"
-            aria-label="Toggle theme"
+            onClick={toggleTheme}
+            className="glass flex h-9 w-9 items-center justify-center rounded-full text-[var(--color-text-secondary)] transition-all duration-300 hover:text-[var(--color-text-primary)]"
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
           >
-            {isDark ? <Moon size={16} /> : <Sun size={16} />}
+            {isDark ? <Sun size={16} /> : <Moon size={16} />}
           </button>
 
           <button
             onClick={() => setMenuOpen((prev) => !prev)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-bg-muted text-text-secondary transition-colors hover:text-text-primary md:hidden"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-[var(--color-bg-muted)] text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-text-primary)] md:hidden"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           >
             {menuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
       </Container>
 
+      {/* Mobile menu */}
       <div
-        className={`md:hidden ${menuOpen ? "max-h-[480px]" : "max-h-0"} overflow-hidden border-t border-white/10 bg-bg-base/95 transition-[max-height] duration-300 ease-out`}
+        className={`md:hidden ${menuOpen ? 'max-h-[480px]' : 'max-h-0'} overflow-hidden border-t border-white/10 bg-[var(--color-bg-base)]/95 transition-[max-height] duration-300 ease-out`}
       >
         <div className="space-y-4 px-5 py-5">
           {navLinks.map((link) => (
             <a
               key={link.to}
               href={link.to}
-              className="block rounded-2xl px-4 py-3 text-base font-medium text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary"
+              className="block rounded-2xl px-4 py-3 text-base font-medium text-[var(--color-text-secondary)] transition-colors hover:bg-white/5 hover:text-[var(--color-text-primary)]"
               onClick={() => setMenuOpen(false)}
             >
               {link.label}
@@ -81,10 +92,7 @@ export default function Navbar() {
           <Button
             variant="outline"
             className="w-full"
-            onClick={() => {
-              downloadResume();
-              setMenuOpen(false);
-            }}
+            onClick={() => { downloadResume(); setMenuOpen(false); }}
           >
             Download Resume
           </Button>

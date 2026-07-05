@@ -22,7 +22,7 @@ const statusStyles = {
 };
 
 export default function ProjectDetail() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const [project, setProject] = useState<Project | undefined>(undefined);
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ export default function ProjectDetail() {
   useEffect(() => {
     let isMounted = true;
 
-    Promise.all([getProjects(), getProject(id ?? '')]).then(
+    Promise.all([getProjects(), getProject(slug ?? '')]).then(
       ([allProjects, selectedProject]) => {
         if (!isMounted) return;
 
@@ -43,7 +43,7 @@ export default function ProjectDetail() {
     return () => {
       isMounted = false;
     };
-  }, [id]);
+  }, [slug]);
 
   const navigation = useMemo(() => {
     if (!project) return { prev: undefined, next: undefined };
@@ -63,7 +63,6 @@ export default function ProjectDetail() {
     if (project?.gallery?.length) {
       return project.gallery;
     }
-
     return Array.from({ length: 3 });
   }, [project]);
 

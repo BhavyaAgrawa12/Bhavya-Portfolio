@@ -7,33 +7,214 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum ProjectStatus {
-  LIVE
-  IN_DEVELOPMENT
-  ARCHIVED
+model achievement {
+  id           String    @id
+  title        String
+  description  String?
+  date         DateTime?
+  imageId      String?
+  displayOrder Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime
+  media        media?    @relation(fields: [imageId], references: [id], map: "Achievement_imageId_fkey")
+
+  @@index([imageId], map: "Achievement_imageId_fkey")
 }
 
-enum ProjectCategory {
-  FULL_STACK
-  FRONTEND
-  BACKEND
-  ACADEMIC
-  PERSONAL
+model admin {
+  id        String   @id
+  username  String   @unique(map: "Admin_username_key")
+  email     String   @unique(map: "Admin_email_key")
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
 }
 
-enum EmploymentType {
-  FULL_TIME
-  PART_TIME
-  INTERNSHIP
-  FREELANCE
+model certification {
+  id                 String    @id
+  title              String
+  issuer             String
+  credentialId       String?
+  credentialUrl      String?
+  verificationUrl    String?
+  issueDate          DateTime?
+  certificateImageId String?
+  displayOrder       Int       @default(0)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime
+  media              media?    @relation(fields: [certificateImageId], references: [id], map: "Certification_certificateImageId_fkey")
+
+  @@index([certificateImageId], map: "Certification_certificateImageId_idx")
 }
 
-enum MediaType {
-  IMAGE
-  PDF
+model contactmessage {
+  id        String   @id
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String   @db.LongText
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([isRead], map: "ContactMessage_isRead_idx")
 }
 
-enum SkillCategory {
+model education {
+  id           String    @id
+  institution  String
+  degree       String
+  field        String?
+  location     String?
+  cgpa         String?
+  description  String?   @db.Text
+  startDate    DateTime?
+  endDate      DateTime?
+  displayOrder Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime
+}
+
+model internship {
+  id             String                    @id
+  company        String
+  position       String
+  employmentType internship_employmentType
+  location       String?
+  description    String?                   @db.LongText
+  companyWebsite String?
+  logoId         String?
+  startDate      DateTime?
+  endDate        DateTime?
+  displayOrder   Int                       @default(0)
+  createdAt      DateTime                  @default(now())
+  updatedAt      DateTime
+  media          media?                    @relation(fields: [logoId], references: [id], map: "Internship_logoId_fkey")
+
+  @@index([logoId], map: "Internship_logoId_idx")
+}
+
+model media {
+  id                                          String          @id
+  fileName                                    String
+  fileUrl                                     String
+  mimeType                                    String
+  fileSize                                    Int
+  type                                        media_type
+  createdAt                                   DateTime        @default(now())
+  updatedAt                                   DateTime
+  achievement                                 achievement[]
+  certification                               certification[]
+  internship                                  internship[]
+  portfolio_portfolio_profileImageIdTomedia   portfolio[]     @relation("portfolio_profileImageIdTomedia")
+  portfolio_portfolio_resumeIdTomedia         portfolio[]     @relation("portfolio_resumeIdTomedia")
+  portfolio_portfolio_workspaceImageIdTomedia portfolio[]     @relation("portfolio_workspaceImageIdTomedia")
+  project                                     project[]
+  projectimage                                projectimage[]
+}
+
+model portfolio {
+  id                                      Int      @id @default(1)
+  heroTitle                               String?
+  heroSubtitle                            String?
+  heroDescription                         String?  @db.Text
+  aboutTitle                              String?
+  aboutDescription                        String?  @db.LongText
+  resumeId                                String?
+  github                                  String?
+  linkedin                                String?
+  x                                       String?
+  instagram                               String?
+  email                                   String?
+  phone                                   String?
+  address                                 String?
+  footerText                              String?  @db.Text
+  metaTitle                               String?
+  metaDescription                         String?  @db.Text
+  keywords                                String?
+  profileImageId                          String?
+  workspaceImageId                        String?
+  createdAt                               DateTime @default(now())
+  updatedAt                               DateTime
+  media_portfolio_profileImageIdTomedia   media?   @relation("portfolio_profileImageIdTomedia", fields: [profileImageId], references: [id], map: "Portfolio_profileImageId_fkey")
+  media_portfolio_resumeIdTomedia         media?   @relation("portfolio_resumeIdTomedia", fields: [resumeId], references: [id], map: "Portfolio_resumeId_fkey")
+  media_portfolio_workspaceImageIdTomedia media?   @relation("portfolio_workspaceImageIdTomedia", fields: [workspaceImageId], references: [id], map: "Portfolio_workspaceImageId_fkey")
+
+  @@index([profileImageId], map: "Portfolio_profileImageId_idx")
+  @@index([resumeId], map: "Portfolio_resumeId_idx")
+  @@index([workspaceImageId], map: "Portfolio_workspaceImageId_idx")
+}
+
+model project {
+  id                String              @id
+  title             String
+  slug              String              @unique(map: "Project_slug_key")
+  category          project_category
+  featured          Boolean             @default(false)
+  status            project_status
+  shortDescription  String              @db.Text
+  description       String              @db.LongText
+  githubUrl         String?
+  liveUrl           String?
+  thumbnailId       String?
+  features          Json?
+  challenges        Json?
+  learnings         Json?
+  displayOrder      Int                 @default(0)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime
+  media             media?              @relation(fields: [thumbnailId], references: [id], map: "Project_thumbnailId_fkey")
+  projectimage      projectimage[]
+  projecttechnology projecttechnology[]
+
+  @@index([category], map: "Project_category_idx")
+  @@index([featured], map: "Project_featured_idx")
+  @@index([slug], map: "Project_slug_idx")
+  @@index([status], map: "Project_status_idx")
+  @@index([thumbnailId], map: "Project_thumbnailId_fkey")
+}
+
+model projectimage {
+  id           String  @id
+  projectId    String
+  mediaId      String
+  displayOrder Int     @default(0)
+  media        media   @relation(fields: [mediaId], references: [id], onDelete: Cascade, map: "ProjectImage_mediaId_fkey")
+  project      project @relation(fields: [projectId], references: [id], onDelete: Cascade, map: "ProjectImage_projectId_fkey")
+
+  @@index([mediaId], map: "ProjectImage_mediaId_fkey")
+  @@index([projectId], map: "ProjectImage_projectId_idx")
+}
+
+model projecttechnology {
+  projectId    String
+  technologyId String
+  project      project    @relation(fields: [projectId], references: [id], onDelete: Cascade, map: "ProjectTechnology_projectId_fkey")
+  technology   technology @relation(fields: [technologyId], references: [id], onDelete: Cascade, map: "ProjectTechnology_technologyId_fkey")
+
+  @@id([projectId, technologyId])
+  @@index([technologyId], map: "ProjectTechnology_technologyId_fkey")
+}
+
+model skill {
+  id           String         @id
+  name         String
+  category     skill_category
+  iconName     String?
+  proficiency  Int?
+  displayOrder Int            @default(0)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime
+}
+
+model technology {
+  id                String              @id
+  name              String              @unique(map: "Technology_name_key")
+  iconName          String?
+  projecttechnology projecttechnology[]
+}
+
+enum skill_category {
   FRONTEND
   BACKEND
   DATABASE
@@ -42,301 +223,28 @@ enum SkillCategory {
   TOOL
 }
 
-model Admin {
-  id       String @id @default(cuid())
-  username String @unique
-  email    String @unique
-  password String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum internship_employmentType {
+  FULL_TIME
+  PART_TIME
+  INTERNSHIP
+  FREELANCE
 }
 
-model Media {
-  id String @id @default(cuid())
-
-  fileName String
-  fileUrl  String
-  mimeType String
-  fileSize Int
-  type     MediaType
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  profileImages       Portfolio[]     @relation("ProfileImage")
-  workspaceImages     Portfolio[]     @relation("WorkspaceImage")
-  resumes             Portfolio[]     @relation("Resume")
-  projectThumbnails   Project[]       @relation("ProjectThumbnail")
-  projectImages       ProjectImage[]
-  internshipLogos     Internship[]
-  certificationImages Certification[]
-  achievementImages   Achievement[]   @relation("AchievementImage")
+enum project_category {
+  FULL_STACK
+  FRONTEND
+  BACKEND
+  ACADEMIC
+  PERSONAL
 }
 
-model Portfolio {
-  id Int @id @default(1)
-
-  heroTitle       String?
-  heroSubtitle    String?
-  heroDescription String? @db.Text
-
-  aboutTitle       String?
-  aboutDescription String? @db.LongText
-
-  resumeId String?
-  resume   Media?  @relation("Resume", fields: [resumeId], references: [id])
-
-  github    String?
-  linkedin  String?
-  x         String?
-  instagram String?
-
-  email   String?
-  phone   String?
-  address String?
-
-  footerText String? @db.Text
-
-  metaTitle       String?
-  metaDescription String? @db.Text
-  keywords        String?
-
-  profileImageId   String?
-  workspaceImageId String?
-
-  profileImage Media? @relation("ProfileImage", fields: [profileImageId], references: [id])
-
-  workspaceImage Media? @relation("WorkspaceImage", fields: [workspaceImageId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([profileImageId])
-  @@index([workspaceImageId])
-  @@index([resumeId])
+enum media_type {
+  IMAGE
+  PDF
 }
 
-model Project {
-  id String @id @default(cuid())
-
-  title String
-  slug  String @unique
-
-  category ProjectCategory
-
-  featured Boolean @default(false)
-
-  status ProjectStatus
-
-  shortDescription String @db.Text
-
-  description String @db.LongText
-
-  githubUrl String?
-  liveUrl   String?
-
-  thumbnailId String?
-  thumbnail   Media?  @relation("ProjectThumbnail", fields: [thumbnailId], references: [id])
-
-  features Json?
-
-  challenges Json?
-
-  learnings Json?
-
-  displayOrder Int @default(0)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  images ProjectImage[]
-
-  technologies ProjectTechnology[]
-
-  @@index([category])
-  @@index([featured])
-  @@index([status])
-  @@index([slug])
-}
-
-model Technology {
-  id String @id @default(cuid())
-
-  name String @unique
-
-  iconName String?
-
-  projects ProjectTechnology[]
-}
-
-model ProjectTechnology {
-  projectId String
-
-  technologyId String
-
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  technology Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
-
-  @@id([projectId, technologyId])
-}
-
-model ProjectImage {
-  id String @id @default(cuid())
-
-  projectId String
-
-  mediaId String
-
-  displayOrder Int @default(0)
-
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  media Media @relation(fields: [mediaId], references: [id], onDelete: Cascade)
-
-  @@index([projectId])
-}
-
-model Education {
-  id String @id @default(cuid())
-
-  institution String
-
-  degree String
-
-  field String?
-
-  location String?
-
-  cgpa String?
-
-  description String? @db.Text
-
-  startDate DateTime?
-
-  endDate DateTime?
-
-  displayOrder Int @default(0)
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
-}
-
-model Internship {
-  id String @id @default(cuid())
-
-  company String
-
-  position String
-
-  employmentType EmploymentType
-
-  location String?
-
-  description String? @db.LongText
-
-  companyWebsite String?
-
-  logoId String?
-
-  logo Media? @relation(fields: [logoId], references: [id])
-
-  startDate DateTime?
-
-  endDate DateTime?
-
-  displayOrder Int @default(0)
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
-
-  @@index([logoId])
-}
-
-model Certification {
-  id String @id @default(cuid())
-
-  title String
-
-  issuer String
-
-  credentialId String?
-
-  credentialUrl String?
-
-  verificationUrl String?
-
-  issueDate DateTime?
-
-  certificateImageId String?
-
-  certificateImage Media? @relation(fields: [certificateImageId], references: [id])
-
-  displayOrder Int @default(0)
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
-
-  @@index([certificateImageId])
-}
-
-model Skill {
-  id String @id @default(cuid())
-
-  name String
-
-  category SkillCategory
-
-  iconName String?
-
-  proficiency Int?
-
-  displayOrder Int @default(0)
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
-}
-
-model Achievement {
-  id String @id @default(cuid())
-
-  title String
-
-  description String?
-
-  date DateTime?
-
-  imageId String?
-  image   Media?  @relation("AchievementImage", fields: [imageId], references: [id])
-
-  displayOrder Int @default(0)
-
-  createdAt DateTime @default(now())
-
-  updatedAt DateTime @updatedAt
-}
-
-model ContactMessage {
-  id String @id @default(cuid())
-
-  name String
-
-  email String
-
-  phone String?
-
-  subject String?
-
-  message String @db.LongText
-
-  isRead Boolean @default(false)
-
-  createdAt DateTime @default(now())
-
-  @@index([isRead])
+enum project_status {
+  LIVE
+  IN_DEVELOPMENT
+  ARCHIVED
 }
