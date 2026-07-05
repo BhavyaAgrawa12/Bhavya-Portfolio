@@ -1,6 +1,0 @@
-import{c as i,j as e}from"./index-C1yabst7.js";/**
- * @license lucide-react v0.469.0 - ISC
- *
- * This source code is licensed under the ISC license.
- * See the LICENSE file in the root directory of this source tree.
- */const c=i("Plus",[["path",{d:"M5 12h14",key:"1ays0h"}],["path",{d:"M12 5v14",key:"s699le"}]]);function x({columns:r,data:s,keyExtractor:l,emptyMessage:d="No entries yet."}){return e.jsx("div",{className:"glass overflow-hidden rounded-2xl",children:e.jsx("div",{className:"overflow-x-auto",children:e.jsxs("table",{className:"w-full text-sm",children:[e.jsx("thead",{children:e.jsx("tr",{className:"border-b border-white/8",children:r.map(t=>e.jsx("th",{className:`px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] ${t.width??""}`,children:t.label},t.key))})}),e.jsx("tbody",{children:s.length===0?e.jsx("tr",{children:e.jsx("td",{colSpan:r.length,className:"px-5 py-12 text-center text-[var(--color-text-secondary)]",children:d})}):s.map(t=>e.jsx("tr",{className:"border-b border-white/5 transition-colors last:border-0 hover:bg-white/3",children:r.map(a=>e.jsx("td",{className:"px-5 py-3.5 align-middle",children:a.render(t)},a.key))},l(t)))})]})})})}export{x as A,c as P};
