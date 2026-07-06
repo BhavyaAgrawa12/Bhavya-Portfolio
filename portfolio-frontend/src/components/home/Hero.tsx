@@ -5,7 +5,7 @@ import Container from '../common/Container';
 import Badge from '../common/Badge';
 import Button from '../common/Button';
 import { usePortfolio } from '../../hooks/usePortfolio';
-import { mediaUrl } from '../../lib/mediaUrl';
+import { mediaUrl, isExternalUrl } from '../../lib/mediaUrl';
 import { pdfUrl } from '../../lib/pdfUrl';
 
 export default function Hero() {
@@ -45,8 +45,9 @@ export default function Hero() {
     portfolio?.heroDescription ??
     "I'm a Computer Science student passionate about building scalable web applications, backend systems, and modern digital experiences. I enjoy transforming ideas into production-ready software while continuously learning new technologies and solving real-world problems.";
 
+  // Resume: prefer external URL (Google Drive, etc.) stored in fileName, fall back to Cloudinary fileUrl, then static file
   const resumeUrl = portfolio?.resume
-    ? pdfUrl(mediaUrl(portfolio.resume.fileUrl))
+    ? (isExternalUrl(portfolio.resume.fileName) ? portfolio.resume.fileName : pdfUrl(mediaUrl(portfolio.resume.fileUrl)))
     : '/resume.pdf';
 
   const workspaceImageUrl = mediaUrl(portfolio?.workspaceImage?.fileUrl);

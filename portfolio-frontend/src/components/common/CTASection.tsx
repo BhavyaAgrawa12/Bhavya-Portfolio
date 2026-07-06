@@ -3,7 +3,7 @@ import Container from '../common/Container';
 import Button from '../common/Button';
 import { fadeUp, fadeScale, VIEWPORT } from '../../lib/motion';
 import { usePortfolio } from '../../hooks/usePortfolio';
-import { mediaUrl } from '../../lib/mediaUrl';
+import { mediaUrl, isExternalUrl } from '../../lib/mediaUrl';
 import { pdfUrl } from '../../lib/pdfUrl';
 
 interface CTASectionProps {
@@ -17,8 +17,9 @@ export default function CTASection({
 }: CTASectionProps) {
   const { data: portfolio } = usePortfolio();
   const email = portfolio?.email ?? 'agrawalbhavya563@gmail.com';
+  // Resume: prefer external URL (Google Drive, etc.) stored in fileName, fall back to Cloudinary fileUrl, then static file
   const resumeUrl = portfolio?.resume
-    ? pdfUrl(mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf')
+    ? (isExternalUrl(portfolio.resume.fileName) ? portfolio.resume.fileName : pdfUrl(mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf'))
     : '/resume.pdf';
 
   return (

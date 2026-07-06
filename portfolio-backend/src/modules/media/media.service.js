@@ -6,6 +6,8 @@ import {
   deleteMedia,
 } from "./media.repository.js";
 
+export { createMedia };
+
 /**
  * After multer-storage-cloudinary uploads, req.file contains:
  *   file.path        → Cloudinary secure_url (absolute URL, works everywhere)
@@ -53,8 +55,9 @@ export const removeMedia = async (id) => {
   try {
     const publicId = extractPublicId(media.fileUrl, media.type);
     if (publicId) {
-      const resourceType = media.type === "PDF" ? "raw" : "image";
-      await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
+      // Both images and PDFs use resource_type "image" in Cloudinary
+      // (PDFs are uploaded via the image pipeline for inline delivery support)
+      await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
     }
   } catch (err) {
     // Don't block DB deletion if Cloudinary fails
@@ -90,7 +93,11 @@ function extractPublicId(url, type) {
       // Images: strip file extension — Cloudinary identifies by public_id without extension
       after = after.replace(/\.[^/.]+$/, "");
     }
-    // PDFs (raw): keep the extension — Cloudinary raw assets require the extension in public_id
+    // PDFs uploaded as image type also need extension stripped for correct public_id
+    // (Cloudinary image pipeline stores them without extension in the public_id)
+    if (type === "PDF") {
+      after = after.replace(/\.pdf$/i, "");
+    }
 
     return after;
   } catch {

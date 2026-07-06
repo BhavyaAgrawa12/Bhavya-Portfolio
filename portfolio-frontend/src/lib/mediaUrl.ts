@@ -9,6 +9,9 @@
  * in the database from before the migration, converting them using
  * VITE_UPLOADS_BASE_URL or deriving the base from VITE_API_BASE_URL.
  *
+ * For external URLs (Google Drive, etc.), we can store them in fileName
+ * and use this function to detect and return them.
+ *
  * Returns undefined for falsy input so callers can use ?? for fallbacks.
  */
 
@@ -34,4 +37,13 @@ export function mediaUrl(fileUrl: string | null | undefined): string | undefined
 
   // Legacy relative path from before Cloudinary migration
   return `${LEGACY_BASE}${fileUrl}`;
+}
+
+/**
+ * Detects if a fileName is an external URL (http/https).
+ * Used to support external resume links (Google Drive, etc.) stored in fileName.
+ */
+export function isExternalUrl(fileName: string | null | undefined): boolean {
+  if (!fileName) return false;
+  return fileName.startsWith('http://') || fileName.startsWith('https://');
 }

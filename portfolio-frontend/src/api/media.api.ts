@@ -22,3 +22,12 @@ export const uploadMedia = async (file: File, folder = 'temp'): Promise<ApiMedia
 export const deleteMedia = async (id: string): Promise<void> => {
   await api.delete(`/media/${id}`);
 };
+
+/**
+ * Creates a media record directly from an external URL (Google Drive, Dropbox, etc.)
+ * without uploading a file. The URL is stored as-is in fileUrl.
+ */
+export const createMediaFromUrl = async (url: string, fileName: string): Promise<ApiMedia> => {
+  const res = await api.post('/media/from-url', { url, fileName });
+  return res.data.data;
+};

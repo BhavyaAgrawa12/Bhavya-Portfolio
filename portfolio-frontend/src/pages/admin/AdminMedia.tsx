@@ -230,26 +230,31 @@ export default function AdminMedia() {
         title="Media"
         description={`${media.length} file${media.length !== 1 ? 's' : ''}`}
         action={
-          <div className="flex items-center gap-3">
-            {/* Custom themed folder selector */}
-            <AdminSelect
-              value={folder}
-              options={FOLDERS.map(f => ({ value: f.value, label: f.label }))}
-              onChange={v => setFolder(v as Folder)}
-              className="w-44"
-            />
-            <input ref={fileRef} type="file" multiple
-              accept="image/jpeg,image/png,image/jpg,image/webp,application/pdf"
-              className="hidden" onChange={handleFileChange}
-            />
-            <button
-              onClick={() => fileRef.current?.click()}
-              disabled={!!uploadProgress}
-              className="flex items-center gap-2 rounded-xl bg-[var(--color-accent-blue)] px-4 py-2.5 text-sm font-semibold text-[var(--color-bg-base)] hover:opacity-90 disabled:opacity-50"
-            >
-              <Upload size={16} />
-              {uploadProgress || 'Upload Files'}
-            </button>
+          <div className="flex flex-col items-end gap-2">
+            <p className="text-xs text-[var(--color-text-muted)]">
+              Select a category, then upload
+            </p>
+            <div className="flex items-center gap-3">
+              {/* Folder selector — controls which Cloudinary subfolder the file goes into */}
+              <AdminSelect
+                value={folder}
+                options={FOLDERS.map(f => ({ value: f.value, label: f.label }))}
+                onChange={v => setFolder(v as Folder)}
+                className="w-48"
+              />
+              <input ref={fileRef} type="file" multiple
+                accept="image/jpeg,image/png,image/jpg,image/webp,application/pdf"
+                className="hidden" onChange={handleFileChange}
+              />
+              <button
+                onClick={() => fileRef.current?.click()}
+                disabled={!!uploadProgress}
+                className="flex items-center gap-2 rounded-xl bg-[var(--color-accent-blue)] px-4 py-2.5 text-sm font-semibold text-[var(--color-bg-base)] hover:opacity-90 disabled:opacity-50"
+              >
+                <Upload size={16} />
+                {uploadProgress || `Upload to ${FOLDERS.find(f => f.value === folder)?.label ?? folder}`}
+              </button>
+            </div>
           </div>
         }
       />

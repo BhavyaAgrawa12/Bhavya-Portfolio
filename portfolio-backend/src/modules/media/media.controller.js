@@ -2,7 +2,7 @@ import asyncHandler from "../../utils/asyncHandler.js";
 import ApiError from "../../utils/ApiError.js";
 import ApiResponse from "../../utils/ApiResponse.js";
 
-import { uploadMedia, fetchAllMedia, removeMedia, fetchMediaById } from "./media.service.js";
+import { uploadMedia, fetchAllMedia, removeMedia, fetchMediaById, createMedia } from "./media.service.js";
 
 export const upload = asyncHandler(async (req, res) => {
   if (!req.file) {
@@ -68,5 +68,26 @@ export const getOne = asyncHandler(async (req, res) => {
 
   return res.status(200).json(
     new ApiResponse(200, "Media fetched successfully", media)
+  );
+});
+
+export const createFromUrl = asyncHandler(async (req, res) => {
+  const { url, fileName } = req.body;
+
+  if (!url || !fileName) {
+    throw new ApiError(400, "URL and fileName are required");
+  }
+
+  // Create a media record with external URL stored in both fileName and fileUrl
+  const media = await createMedia({
+    fileName: fileName, // Store the external URL here for frontend detection
+    fileUrl: url,       // Store the actual URL here
+    mimeType: 'application/pdf',
+    fileSize: 0,
+    type: 'PDF',
+  });
+
+  return res.status(201).json(
+    new ApiResponse(201, "Media created from URL successfully", media)
   );
 });

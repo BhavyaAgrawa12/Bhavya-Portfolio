@@ -4,7 +4,7 @@ import Container from '../common/Container';
 import Button from '../common/Button';
 import { usePortfolio } from '../../hooks/usePortfolio';
 import { useTheme } from '../../context/ThemeContext';
-import { mediaUrl } from '../../lib/mediaUrl';
+import { mediaUrl, isExternalUrl } from '../../lib/mediaUrl';
 import { pdfUrl } from '../../lib/pdfUrl';
 
 const navLinks = [
@@ -20,9 +20,9 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { data: portfolio } = usePortfolio();
 
-  // Resume: prefer the PDF uploaded via admin, fall back to the static file
+  // Resume: prefer external URL (Google Drive, etc.) stored in fileName, fall back to Cloudinary fileUrl, then static file
   const resumeUrl = portfolio?.resume
-    ? pdfUrl(mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf')
+    ? (isExternalUrl(portfolio.resume.fileName) ? portfolio.resume.fileName : pdfUrl(mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf'))
     : '/resume.pdf';
 
   const openResume = () => {

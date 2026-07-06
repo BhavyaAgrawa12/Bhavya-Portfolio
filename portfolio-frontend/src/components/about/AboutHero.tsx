@@ -5,15 +5,16 @@ import Container from '../common/Container';
 import Badge from '../common/Badge';
 import Button from '../common/Button';
 import { usePortfolio } from '../../hooks/usePortfolio';
-import { mediaUrl } from '../../lib/mediaUrl';
+import { mediaUrl, isExternalUrl } from '../../lib/mediaUrl';
 import { pdfUrl } from '../../lib/pdfUrl';
 
 export default function AboutHero() {
   const { data: portfolio } = usePortfolio();
 
   const profileImageUrl = mediaUrl(portfolio?.profileImage?.fileUrl);
+  // Resume: prefer external URL (Google Drive, etc.) stored in fileName, fall back to Cloudinary fileUrl, then static file
   const resumeUrl = portfolio?.resume
-    ? pdfUrl(mediaUrl(portfolio.resume.fileUrl))
+    ? (isExternalUrl(portfolio.resume.fileName) ? portfolio.resume.fileName : pdfUrl(mediaUrl(portfolio.resume.fileUrl)))
     : '/resume.pdf';
 
   return (

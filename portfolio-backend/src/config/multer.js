@@ -17,21 +17,8 @@ const IMAGE_MIMETYPES = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
 const PDF_MIMETYPES   = ["application/pdf"];
 
 /**
- * Why separate storages instead of resource_type: "auto":
- *
- * multer-storage-cloudinary@4.x stores whatever URL Cloudinary returns in
- * file.path. When resource_type is "auto", Cloudinary classifies PDFs as
- * "raw" and delivers them at /raw/upload/... but the library may record
- * /image/upload/... in file.path, causing a URL mismatch that returns 401.
- *
- * Using explicit resource_type per file type guarantees:
- *   - Images: stored and delivered at /image/upload/...  ← file.path is correct
- *   - PDFs:   stored and delivered at /raw/upload/...    ← file.path is correct
- *
- * We NEVER manually construct Cloudinary URLs. We always store file.path
- * directly from the upload response, which is always the correct delivery URL.
+ * Images: resource_type "image" — delivered at /image/upload/
  */
-
 const imageStorage = new CloudinaryStorage({
   cloudinary,
   params: (req) => {
@@ -41,11 +28,27 @@ const imageStorage = new CloudinaryStorage({
       folder: `portfolio/${folder}`,
       allowed_formats: ["jpg", "jpeg", "png", "webp"],
       resource_type: "image",
-      access_mode: "public",          // ensure public delivery
+      access_mode: "public",
     };
   },
 });
 
+/**
+ * PDFs: ALSO use resource_type "image" with format "pdf".
+ *
+ * Why not resource_type "raw"?
+ * - raw assets are delivered with Content-Disposition: attachment by default.
+ * - Cloudinary does not support fl_inline on raw resources.
+ * - This means raw PDFs always force a download — they cannot be opened inline.
+ *
+ * Why resource_type "image" for PDFs?
+ * - Cloudinary's image pipeline supports PDFs natively.
+ * - Images are delivered inline (Content-Disposition: inline) by default.
+ * - fl_inline transformation is supported and can be added if needed.
+ * - The secure_url uses /image/upload/ and opens correctly in browser tabs.
+ *
+ * Cloudinary documentation confirms PDFs are valid image-type uploads.
+ */
 const pdfStorage = new CloudinaryStorage({
   cloudinary,
   params: (req) => {
@@ -54,23 +57,15 @@ const pdfStorage = new CloudinaryStorage({
     return {
       folder: `portfolio/${folder}`,
       allowed_formats: ["pdf"],
-      resource_type: "raw",
+      resource_type: "image",   // image pipeline supports PDFs and inline delivery
+      format: "pdf",            // preserve as PDF — do not convert to image
       access_mode: "public",
-      // Preserve original filename so the URL includes .pdf extension.
-      // Without this Cloudinary assigns a random public_id with no extension,
-      // causing browsers to not recognise the MIME type.
-      // use_filename: true  → use the original file name as the public_id base
-      // unique_filename: true → append a random suffix to avoid collisions
       use_filename: true,
       unique_filename: true,
     };
   },
 });
 
-/**
- * Custom storage that picks imageStorage or pdfStorage based on mimetype.
- * This is the minimal interface multer expects from a storage engine.
- */
 const smartStorage = {
   _handleFile(req, file, cb) {
     if (IMAGE_MIMETYPES.includes(file.mimetype)) {

@@ -9,6 +9,7 @@ import ErrorState from '../../components/common/ErrorState';
 import { usePortfolio } from '../../hooks/usePortfolio';
 import { useMedia } from '../../hooks/useMedia';
 import { updatePortfolio } from '../../api/portfolio.api';
+import { createMediaFromUrl } from '../../api/media.api';
 import { useToast } from '../../context/ToastContext';
 import { mediaUrl } from '../../lib/mediaUrl';
 import type { Portfolio, ApiMedia } from '../../types/api';
@@ -24,12 +25,15 @@ type PickerTarget = 'profileImageId' | 'workspaceImageId' | 'resumeId';
 
 /* ── Image Card ─────────────────────────────────────────────────── */
 function ImageCard({
-  label, hint, currentMedia, onPick, onClear, isPdf,
+  label, hint, currentMedia, onPick, onClear, isPdf, externalUrl, onExternalUrlChange, onExternalUrlSave,
 }: {
   label: string; hint: string; currentMedia: ApiMedia | null | undefined;
   onPick: () => void; onClear: () => void; isPdf?: boolean;
+  externalUrl?: string; onExternalUrlChange?: (url: string) => void; onExternalUrlSave?: () => void;
 }) {
   const url = mediaUrl(currentMedia?.fileUrl);
+  const displayUrl = externalUrl || (currentMedia?.fileName?.startsWith('http') ? currentMedia.fileName : url);
+  
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between gap-2 flex-wrap">
@@ -38,11 +42,18 @@ function ImageCard({
           <p className="text-xs text-[var(--color-text-muted)]">{hint}</p>
         </div>
         <div className="flex gap-2">
-          <button type="button" onClick={onPick}
-            className="rounded-lg border border-white/10 px-3 py-1.5 text-xs hover:border-[var(--color-accent-blue)] hover:text-[var(--color-accent-blue)] transition">
-            {currentMedia ? 'Change' : 'Select'}
-          </button>
-          {currentMedia && (
+          {isPdf ? (
+            <button type="button" onClick={onPick}
+              className="rounded-lg border border-white/10 px-3 py-1.5 text-xs hover:border-[var(--color-accent-blue)] hover:text-[var(--color-accent-blue)] transition">
+              Upload PDF
+            </button>
+          ) : (
+            <button type="button" onClick={onPick}
+              className="rounded-lg border border-white/10 px-3 py-1.5 text-xs hover:border-[var(--color-accent-blue)] hover:text-[var(--color-accent-blue)] transition">
+              {currentMedia ? 'Change' : 'Select'}
+            </button>
+          )}
+          {(currentMedia || externalUrl) && (
             <button type="button" onClick={onClear}
               className="rounded-lg border border-white/10 px-3 py-1.5 text-xs text-red-400 hover:bg-red-500/10 transition">
               Remove
@@ -50,15 +61,36 @@ function ImageCard({
           )}
         </div>
       </div>
+      {isPdf && onExternalUrlChange && onExternalUrlSave && (
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-[var(--color-text-muted)]">Or paste external URL (Google Drive, etc.):</label>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={externalUrl || ''}
+              onChange={(e) => onExternalUrlChange(e.target.value)}
+              placeholder="https://drive.google.com/..."
+              className="flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:border-[var(--color-accent-blue)] focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={onExternalUrlSave}
+              className="rounded-lg bg-[var(--color-accent-blue)] px-3 py-2 text-xs font-semibold text-[var(--color-bg-base)] hover:opacity-90 transition"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      )}
       <div className="glass flex h-40 w-full items-center justify-center overflow-hidden rounded-2xl">
-        {url ? (
+        {displayUrl ? (
           isPdf ? (
             <div className="flex flex-col items-center gap-2 text-[var(--color-text-secondary)]">
               <FileText size={28} />
-              <span className="text-xs truncate max-w-[120px]">{currentMedia?.fileName}</span>
+              <span className="text-xs truncate max-w-[120px]">{externalUrl ? 'External URL' : currentMedia?.fileName}</span>
             </div>
           ) : (
-            <img src={url} alt={label} className="h-full w-full object-cover" />
+            <img src={displayUrl} alt={label} className="h-full w-full object-cover" />
           )
         ) : (
           <div className="flex flex-col items-center gap-2 text-[var(--color-text-muted)]">
@@ -130,6 +162,9 @@ export default function AdminPortfolio() {
     resumeId?: ApiMedia | null;
   }>({});
 
+  // External URL for resume (stored in fileName field)
+  const [externalResumeUrl, setExternalResumeUrl] = useState('');
+
   const [pickerOpen, setPickerOpen] = useState(false);
   const pickerTargetRef = useRef<PickerTarget>('profileImageId');
   const [pickerFilter, setPickerFilter] = useState<'IMAGE' | 'PDF'>('IMAGE');
@@ -156,6 +191,10 @@ export default function AdminPortfolio() {
       metaDescription: portfolio.metaDescription ?? '',
       keywords: portfolio.keywords ?? '',
     });
+    // Initialize external resume URL if fileName is an external URL
+    if (portfolio.resume?.fileName?.startsWith('http')) {
+      setExternalResumeUrl(portfolio.resume.fileName);
+    }
   }, [portfolio]);
 
   if (isLoading) return <LoadingSpinner />;
@@ -215,6 +254,9 @@ export default function AdminPortfolio() {
 
   const clearImage = async (target: PickerTarget) => {
     setImageOverrides(prev => ({ ...prev, [target]: null }));
+    if (target === 'resumeId') {
+      setExternalResumeUrl('');
+    }
     try {
       await updatePortfolio({ [target]: null });
       qc.invalidateQueries({ queryKey: ['portfolio'] });
@@ -226,6 +268,25 @@ export default function AdminPortfolio() {
         delete next[target];
         return next;
       });
+    }
+  };
+
+  const handleExternalResumeUrlSave = async () => {
+    if (!externalResumeUrl) return;
+    
+    try {
+      // Create a media record with external URL
+      const media = await createMediaFromUrl(externalResumeUrl, externalResumeUrl);
+      
+      // Update portfolio with the new media ID
+      await updatePortfolio({ resumeId: media.id });
+      qc.invalidateQueries({ queryKey: ['portfolio'] });
+      showToast('External resume URL saved successfully.', 'success');
+    } catch (err: unknown) {
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
+        'Failed to save external URL. Please try again.';
+      showToast(msg, 'error');
     }
   };
 
@@ -284,6 +345,9 @@ export default function AdminPortfolio() {
             onPick={() => openPicker('resumeId')}
             onClear={() => clearImage('resumeId')}
             isPdf
+            externalUrl={externalResumeUrl}
+            onExternalUrlChange={setExternalResumeUrl}
+            onExternalUrlSave={handleExternalResumeUrlSave}
           />
         </div>
       </section>
