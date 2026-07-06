@@ -1,5 +1,4 @@
 import { Github, ExternalLink, ImageIcon } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 import GlassCard from '../common/GlassCard';
 import type { Project } from '../../types/portfolio';
@@ -24,7 +23,7 @@ export default function ProjectCard({ project }: { project: Project }) {
   return (
     <GlassCard
       className="group flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl transition-all duration-500 hover:-translate-y-2 hover:border-[var(--color-accent-blue)]/40 hover:shadow-[0_20px_50px_rgba(0,0,0,.45)]"
-      onClick={() => navigate(`/projects/${project.id}`)}
+      onClick={() => { window.location.href = `/projects/${project.id}`; }}
     >
       {/* Thumbnail */}
       <div className="flex aspect-video items-center justify-center border-b border-white/10 bg-[var(--color-bg-elevated)] overflow-hidden">
