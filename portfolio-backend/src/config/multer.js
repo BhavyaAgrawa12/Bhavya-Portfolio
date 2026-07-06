@@ -1,58 +1,48 @@
 import multer from "multer";
-import path from "path";
-import fs from "fs";
-import { v4 as uuidv4 } from "uuid";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import cloudinary from "./cloudinary.js";
 
-const uploadRoot = "uploads";
+const ALLOWED_FOLDERS = [
+  "profile",
+  "workspace",
+  "projects",
+  "certifications",
+  "internships",
+  "achievements",
+  "resume",
+  "temp",
+];
 
-const storage = multer.diskStorage({
-    destination: (req,file,cb) => {
-        const folder = req.body.folder || "temp";
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: (req) => {
+    const folder = req.body.folder || "temp";
 
-        const allowedFolders = [
-            "profile",
-            "workspace",
-            "projects",
-            "certifications",
-            "interships",
-            "achievements",
-            "resume",
-            "temp",
-        ];
-
-        if(!allowedFolders.includes(folder)){
-            return cb(new Error("Invalid folder name"));
-        }
-
-        const uploadPath = path.join(uploadRoot, folder);
-        fs.mkdirSync(uploadPath, { recursive: true });
-        cb(null, uploadPath);
-    },
-
-    filename: (req,file,cb) => {
-        const ext = path.extname(file.originalname);
-        cb(null, `${uuidv4()}${ext}`)
+    if (!ALLOWED_FOLDERS.includes(folder)) {
+      throw new Error("Invalid folder name");
     }
+
+    return {
+      // Organise under portfolio/ so all assets live in one top-level folder
+      folder: `portfolio/${folder}`,
+      // Keep the original file extension for PDFs; Cloudinary handles images natively
+      allowed_formats: ["jpg", "jpeg", "png", "webp", "pdf"],
+      resource_type: "auto",          // accepts both images and raw (PDF)
+      // No transformation — store originals as-is
+    };
+  },
 });
 
-const fileFilter = (req, file, cb) => {
-  const imageTypes = [
+const fileFilter = (_req, file, cb) => {
+  const allowed = [
     "image/jpeg",
     "image/png",
     "image/jpg",
     "image/webp",
-  ];
-
-  const pdfTypes = [
     "application/pdf",
   ];
 
-  const allowedTypes = [
-    ...imageTypes,
-    ...pdfTypes,
-  ];
-
-  if (allowedTypes.includes(file.mimetype)) {
+  if (allowed.includes(file.mimetype)) {
     return cb(null, true);
   }
 
@@ -60,12 +50,9 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({
-    storage: storage,
-    fileFilter: fileFilter,
-
-    limits: {
-        fileSize: 5 * 1024 * 1024, 
-    },
+  storage,
+  fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB — same as before
 });
 
 export default upload;

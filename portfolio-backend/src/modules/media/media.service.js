@@ -1,4 +1,4 @@
-import path from "path";
+import cloudinary from "../../config/cloudinary.js";
 import {
   createMedia,
   getAllMedia,
@@ -6,28 +6,84 @@ import {
   deleteMedia,
 } from "./media.respository.js";
 
+/**
+ * After multer-storage-cloudinary uploads, req.file contains:
+ *   file.path        → Cloudinary secure_url (absolute URL, works everywhere)
+ *   file.filename    → Cloudinary public_id  (used to delete later)
+ *   file.originalname
+ *   file.mimetype
+ *   file.size
+ *
+ * We store:
+ *   fileName = original filename (human readable)
+ *   fileUrl  = secure_url        (directly usable in <img src=...>)
+ *
+ * For deletion we re-derive the public_id from fileUrl.
+ * This avoids any schema change.
+ */
 export const uploadMedia = async (file) => {
-  const type = file.mimetype.startsWith("image/")
-    ? "IMAGE"
-    : "PDF";
+  const type = file.mimetype.startsWith("image/") ? "IMAGE" : "PDF";
 
   return await createMedia({
-    fileName: file.filename,
-    fileUrl: `/uploads/${path.basename(file.destination)}/${file.filename}`,
+    fileName: file.originalname,
+    fileUrl: file.path,       // secure_url — absolute Cloudinary URL
     mimeType: file.mimetype,
     fileSize: file.size,
     type,
   });
 };
 
-export const fetchAllMedia = async () => {
-  return await getAllMedia();
-};
+export const fetchAllMedia = async () => getAllMedia();
 
-export const fetchMediaById = async (id) => {
-  return await getMediaById(id);
-};
+export const fetchMediaById = async (id) => getMediaById(id);
 
+/**
+ * Delete asset from Cloudinary then remove DB record.
+ *
+ * public_id is derived from the secure_url:
+ *   Image: https://res.cloudinary.com/cloud/image/upload/v123/portfolio/temp/abc.jpg
+ *          → public_id: "portfolio/temp/abc"  (no extension)
+ *   PDF:   https://res.cloudinary.com/cloud/raw/upload/v123/portfolio/resume/abc.pdf
+ *          → public_id: "portfolio/resume/abc.pdf"  (keep extension for raw type)
+ */
 export const removeMedia = async (id) => {
+  const media = await getMediaById(id);
+  if (!media) return;
+
+  try {
+    const publicId = extractPublicId(media.fileUrl, media.type);
+    if (publicId) {
+      const resourceType = media.type === "PDF" ? "raw" : "image";
+      await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
+    }
+  } catch (err) {
+    // Don't block DB deletion if Cloudinary fails
+    console.error(`[Cloudinary] Delete failed for ${media.fileUrl}:`, err.message);
+  }
+
   return await deleteMedia(id);
 };
+
+/**
+ * Extracts Cloudinary public_id from a secure_url.
+ * Strips the version segment (v1234567890/) and, for images, the file extension.
+ */
+function extractPublicId(url, type) {
+  if (!url || !url.includes("cloudinary.com")) return null;
+
+  try {
+    const uploadIdx = url.indexOf("/upload/");
+    if (uploadIdx === -1) return null;
+
+    let after = url.slice(uploadIdx + 8);   // everything after "/upload/"
+    after = after.replace(/^v\d+\//, "");   // strip version prefix
+
+    if (type !== "PDF") {
+      after = after.replace(/\.[^/.]+$/, "");  // strip extension for images
+    }
+
+    return after;
+  } catch {
+    return null;
+  }
+}
