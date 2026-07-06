@@ -66,21 +66,31 @@ export const removeMedia = async (id) => {
 
 /**
  * Extracts Cloudinary public_id from a secure_url.
- * Strips the version segment (v1234567890/) and, for images, the file extension.
+ *
+ * Image URL: https://res.cloudinary.com/cloud/image/upload/v123/portfolio/temp/abc.jpg
+ *   → public_id: "portfolio/temp/abc"  (no extension — Cloudinary strips it for images)
+ *
+ * PDF URL:   https://res.cloudinary.com/cloud/raw/upload/v123/portfolio/resume/abc.pdf
+ *   → public_id: "portfolio/resume/abc.pdf"  (keep extension — required for raw assets)
+ *
+ * We parse the URL directly instead of reconstructing it to avoid any mismatch.
  */
 function extractPublicId(url, type) {
   if (!url || !url.includes("cloudinary.com")) return null;
 
   try {
+    // Find "/upload/" segment — works for both /image/upload/ and /raw/upload/
     const uploadIdx = url.indexOf("/upload/");
     if (uploadIdx === -1) return null;
 
     let after = url.slice(uploadIdx + 8);   // everything after "/upload/"
-    after = after.replace(/^v\d+\//, "");   // strip version prefix
+    after = after.replace(/^v\d+\//, "");   // strip optional version prefix v123456/
 
     if (type !== "PDF") {
-      after = after.replace(/\.[^/.]+$/, "");  // strip extension for images
+      // Images: strip file extension — Cloudinary identifies by public_id without extension
+      after = after.replace(/\.[^/.]+$/, "");
     }
+    // PDFs (raw): keep the extension — Cloudinary raw assets require the extension in public_id
 
     return after;
   } catch {
