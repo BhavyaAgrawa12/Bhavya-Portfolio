@@ -9,6 +9,15 @@ export const upload = asyncHandler(async (req, res) => {
     throw new ApiError(400, "No file uploaded");
   }
 
+  // Log the full Cloudinary response for debugging
+  console.log("[Media Upload] req.file:", {
+    originalname: req.file.originalname,
+    mimetype: req.file.mimetype,
+    size: req.file.size,
+    path: req.file.path,           // secure_url stored as fileUrl
+    filename: req.file.filename,   // public_id
+  });
+
   const media = await uploadMedia(req.file);
 
   return res.status(201).json(

@@ -54,8 +54,15 @@ const pdfStorage = new CloudinaryStorage({
     return {
       folder: `portfolio/${folder}`,
       allowed_formats: ["pdf"],
-      resource_type: "raw",           // PDFs must be raw — not image
-      access_mode: "public",          // ensure public delivery
+      resource_type: "raw",
+      access_mode: "public",
+      // Preserve original filename so the URL includes .pdf extension.
+      // Without this Cloudinary assigns a random public_id with no extension,
+      // causing browsers to not recognise the MIME type.
+      // use_filename: true  → use the original file name as the public_id base
+      // unique_filename: true → append a random suffix to avoid collisions
+      use_filename: true,
+      unique_filename: true,
     };
   },
 });
