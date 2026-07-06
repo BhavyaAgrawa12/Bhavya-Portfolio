@@ -10,12 +10,24 @@ export const upload = asyncHandler(async (req, res) => {
   }
 
   // Log the full Cloudinary response for debugging
-  console.log("[Media Upload] req.file:", {
+  console.log("[Media Upload] Full Cloudinary response:", {
     originalname: req.file.originalname,
     mimetype: req.file.mimetype,
     size: req.file.size,
     path: req.file.path,           // secure_url stored as fileUrl
     filename: req.file.filename,   // public_id
+    // Capture additional Cloudinary response fields if available
+    url: req.file.url,
+    secure_url: req.file.secure_url,
+    public_id: req.file.public_id,
+    resource_type: req.file.resource_type,
+    format: req.file.format,
+    original_filename: req.file.original_filename,
+    asset_id: req.file.asset_id,
+    version: req.file.version,
+    signature: req.file.signature,
+    bytes: req.file.bytes,
+    etag: req.file.etag,
   });
 
   const media = await uploadMedia(req.file);

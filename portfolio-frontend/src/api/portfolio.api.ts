@@ -3,6 +3,7 @@ import type { Portfolio } from '../types/api';
 
 export const fetchPortfolio = async (): Promise<Portfolio> => {
   const res = await api.get('/portfolio');
+  console.log('[Portfolio API] Resume URL from API response:', res.data.data?.resume?.fileUrl);
   return res.data.data;
 };
 

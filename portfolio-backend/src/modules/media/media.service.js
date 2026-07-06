@@ -4,7 +4,7 @@ import {
   getAllMedia,
   getMediaById,
   deleteMedia,
-} from "./media.respository.js";
+} from "./media.repository.js";
 
 /**
  * After multer-storage-cloudinary uploads, req.file contains:

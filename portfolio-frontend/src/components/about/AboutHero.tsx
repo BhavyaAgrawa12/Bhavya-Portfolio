@@ -49,7 +49,10 @@ export default function AboutHero() {
             </Button>
             <Button
               variant="outline"
-              onClick={() => window.open(resumeUrl ?? '/resume.pdf', '_blank', 'noopener,noreferrer')}
+              onClick={() => {
+                console.log('[AboutHero] Resume URL opened:', resumeUrl ?? '/resume.pdf');
+                window.open(resumeUrl ?? '/resume.pdf', '_blank', 'noopener,noreferrer');
+              }}
             >
               View Resume
             </Button>

@@ -56,6 +56,7 @@ export default function Hero() {
   };
 
   const openResume = () => {
+    console.log('[Hero] Resume URL opened:', resumeUrl ?? '/resume.pdf');
     window.open(resumeUrl ?? '/resume.pdf', '_blank', 'noopener,noreferrer');
   };
 

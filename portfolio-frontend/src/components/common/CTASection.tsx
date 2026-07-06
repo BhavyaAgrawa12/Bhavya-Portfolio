@@ -83,7 +83,10 @@ export default function CTASection({
               <Button
                 variant="outline"
                 className="transition-all duration-300 hover:border-[var(--color-accent-blue)] hover:bg-[var(--color-accent-blue)]/10 hover:shadow-[0_0_30px_rgba(59,130,246,0.25)]"
-                onClick={() => window.open(resumeUrl, '_blank', 'noopener,noreferrer')}
+                onClick={() => {
+                  console.log('[CTASection] Resume URL opened:', resumeUrl);
+                  window.open(resumeUrl, '_blank', 'noopener,noreferrer');
+                }}
               >
                 View Resume
               </Button>

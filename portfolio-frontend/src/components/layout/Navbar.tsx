@@ -25,7 +25,10 @@ export default function Navbar() {
     ? pdfUrl(mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf')
     : '/resume.pdf';
 
-  const openResume = () => window.open(resumeUrl, '_blank', 'noopener,noreferrer');
+  const openResume = () => {
+    console.log('[Navbar] Resume URL opened:', resumeUrl);
+    window.open(resumeUrl, '_blank', 'noopener,noreferrer');
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/6 bg-[var(--color-bg-base)]/80 backdrop-blur-xl">

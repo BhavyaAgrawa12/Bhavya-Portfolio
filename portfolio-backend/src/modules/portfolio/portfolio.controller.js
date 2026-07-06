@@ -5,6 +5,7 @@ import { fetchPortfolio, editPortfolio } from "./portfolio.service.js";
 
 export const getPortfolio = asyncHandler(async(req, res)=>{
     const portfolio = await fetchPortfolio();
+    console.log("[Portfolio API] Resume URL from DB:", portfolio?.resume?.fileUrl);
     return res.status(200).json(
         new ApiResponse(200,"Portfolio fetched successfully",portfolio)
     );
