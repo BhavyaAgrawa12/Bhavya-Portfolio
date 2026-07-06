@@ -19,7 +19,21 @@ app.set("etag", false);
 app.use(helmet());
 
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  // Accept requests from localhost (dev) and the Vercel frontend (prod)
+  // CLIENT_URL can be a comma-separated list of allowed origins
+  origin: (origin, callback) => {
+    const allowed = (process.env.CLIENT_URL || '')
+      .split(',')
+      .map(o => o.trim())
+      .filter(Boolean);
+
+    // Allow non-browser requests (curl, Postman, server-to-server) and listed origins
+    if (!origin || allowed.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS: origin ${origin} not allowed`));
+    }
+  },
   credentials: true,
 }));
 

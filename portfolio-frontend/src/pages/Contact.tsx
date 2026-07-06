@@ -8,6 +8,7 @@ import FAQ from '../components/contact/FAQ';
 import { submitContact } from '../api/contact.api';
 import { usePortfolio } from '../hooks/usePortfolio';
 import { useToast } from '../context/ToastContext';
+import { mediaUrl } from '../lib/mediaUrl';
 
 interface FormState {
   name: string;
@@ -31,7 +32,7 @@ export default function Contact() {
   const github = portfolio?.github ?? 'https://github.com/BhavyaAgrawa12';
   const linkedin = portfolio?.linkedin ?? 'https://www.linkedin.com/in/bhavya-agrawal-212052291';
   const resumeUrl = portfolio?.resume?.fileUrl
-    ? `${import.meta.env.VITE_UPLOADS_BASE_URL}${portfolio.resume.fileUrl}`
+    ? (mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf')
     : '/resume.pdf';
 
   const contactCards = [
