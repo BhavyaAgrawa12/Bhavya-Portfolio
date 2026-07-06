@@ -5,6 +5,7 @@ import Button from '../common/Button';
 import { usePortfolio } from '../../hooks/usePortfolio';
 import { useTheme } from '../../context/ThemeContext';
 import { mediaUrl } from '../../lib/mediaUrl';
+import { pdfUrl } from '../../lib/pdfUrl';
 
 const navLinks = [
   { label: 'Home', to: '/' },
@@ -21,10 +22,10 @@ export default function Navbar() {
 
   // Resume: prefer the PDF uploaded via admin, fall back to the static file
   const resumeUrl = portfolio?.resume
-    ? (mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf')
+    ? pdfUrl(mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf')
     : '/resume.pdf';
 
-  const downloadResume = () => window.open(resumeUrl, '_blank');
+  const openResume = () => window.open(resumeUrl, '_blank', 'noopener,noreferrer');
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/6 bg-[var(--color-bg-base)]/80 backdrop-blur-xl">
@@ -49,9 +50,9 @@ export default function Navbar() {
           <Button
             variant="outline"
             className="hidden md:inline-flex"
-            onClick={downloadResume}
+            onClick={openResume}
           >
-            Download Resume
+            View Resume
           </Button>
 
           {/* Theme toggle — actually works now */}
@@ -92,9 +93,9 @@ export default function Navbar() {
           <Button
             variant="outline"
             className="w-full"
-            onClick={() => { downloadResume(); setMenuOpen(false); }}
+            onClick={() => { openResume(); setMenuOpen(false); }}
           >
-            Download Resume
+            View Resume
           </Button>
         </div>
       </div>

@@ -4,6 +4,7 @@ import Button from '../common/Button';
 import { fadeUp, fadeScale, VIEWPORT } from '../../lib/motion';
 import { usePortfolio } from '../../hooks/usePortfolio';
 import { mediaUrl } from '../../lib/mediaUrl';
+import { pdfUrl } from '../../lib/pdfUrl';
 
 interface CTASectionProps {
   title?: string;
@@ -17,7 +18,7 @@ export default function CTASection({
   const { data: portfolio } = usePortfolio();
   const email = portfolio?.email ?? 'agrawalbhavya563@gmail.com';
   const resumeUrl = portfolio?.resume
-    ? (mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf')
+    ? pdfUrl(mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf')
     : '/resume.pdf';
 
   return (
@@ -82,9 +83,9 @@ export default function CTASection({
               <Button
                 variant="outline"
                 className="transition-all duration-300 hover:border-[var(--color-accent-blue)] hover:bg-[var(--color-accent-blue)]/10 hover:shadow-[0_0_30px_rgba(59,130,246,0.25)]"
-                onClick={() => window.open(resumeUrl, '_blank')}
+                onClick={() => window.open(resumeUrl, '_blank', 'noopener,noreferrer')}
               >
-                Download Resume
+                View Resume
               </Button>
             </motion.div>
           </div>

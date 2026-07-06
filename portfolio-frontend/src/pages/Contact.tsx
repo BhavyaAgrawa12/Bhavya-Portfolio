@@ -9,6 +9,7 @@ import { submitContact } from '../api/contact.api';
 import { usePortfolio } from '../hooks/usePortfolio';
 import { useToast } from '../context/ToastContext';
 import { mediaUrl } from '../lib/mediaUrl';
+import { pdfUrl } from '../lib/pdfUrl';
 
 interface FormState {
   name: string;
@@ -32,14 +33,14 @@ export default function Contact() {
   const github = portfolio?.github ?? 'https://github.com/BhavyaAgrawa12';
   const linkedin = portfolio?.linkedin ?? 'https://www.linkedin.com/in/bhavya-agrawal-212052291';
   const resumeUrl = portfolio?.resume?.fileUrl
-    ? (mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf')
+    ? pdfUrl(mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf')
     : '/resume.pdf';
 
   const contactCards = [
     { icon: Mail, label: 'Email', value: email, href: `mailto:${email}` },
     { icon: Github, label: 'GitHub', value: 'github.com/BhavyaAgrawa12', href: github },
     { icon: Linkedin, label: 'LinkedIn', value: 'LinkedIn Profile', href: linkedin },
-    { icon: FileText, label: 'Resume', value: 'Download Resume', href: resumeUrl },
+    { icon: FileText, label: 'Resume', value: 'View Resume', href: resumeUrl },
   ];
 
   const validate = (): boolean => {

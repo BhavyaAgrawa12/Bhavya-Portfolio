@@ -46,7 +46,7 @@ export default function Hero() {
     "I'm a Computer Science student passionate about building scalable web applications, backend systems, and modern digital experiences. I enjoy transforming ideas into production-ready software while continuously learning new technologies and solving real-world problems.";
 
   const resumeUrl = portfolio?.resume
-    ? mediaUrl(portfolio.resume.fileUrl)
+    ? pdfUrl(mediaUrl(portfolio.resume.fileUrl))
     : '/resume.pdf';
 
   const workspaceImageUrl = mediaUrl(portfolio?.workspaceImage?.fileUrl);
@@ -55,8 +55,8 @@ export default function Hero() {
     document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const downloadResume = () => {
-    window.open(resumeUrl, '_blank');
+  const openResume = () => {
+    window.open(resumeUrl ?? '/resume.pdf', '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -91,8 +91,8 @@ export default function Hero() {
             <Button variant="primary" onClick={scrollToProjects}>
               View Projects
             </Button>
-            <Button variant="outline" onClick={downloadResume}>
-              Download Resume
+            <Button variant="outline" onClick={openResume}>
+              View Resume
             </Button>
           </div>
 

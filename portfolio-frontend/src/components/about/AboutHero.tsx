@@ -6,13 +6,14 @@ import Badge from '../common/Badge';
 import Button from '../common/Button';
 import { usePortfolio } from '../../hooks/usePortfolio';
 import { mediaUrl } from '../../lib/mediaUrl';
+import { pdfUrl } from '../../lib/pdfUrl';
 
 export default function AboutHero() {
   const { data: portfolio } = usePortfolio();
 
   const profileImageUrl = mediaUrl(portfolio?.profileImage?.fileUrl);
   const resumeUrl = portfolio?.resume
-    ? mediaUrl(portfolio.resume.fileUrl)
+    ? pdfUrl(mediaUrl(portfolio.resume.fileUrl))
     : '/resume.pdf';
 
   return (
@@ -48,9 +49,9 @@ export default function AboutHero() {
             </Button>
             <Button
               variant="outline"
-              onClick={() => window.open(resumeUrl, '_blank')}
+              onClick={() => window.open(resumeUrl ?? '/resume.pdf', '_blank', 'noopener,noreferrer')}
             >
-              Download Resume
+              View Resume
             </Button>
           </div>
         </motion.div>

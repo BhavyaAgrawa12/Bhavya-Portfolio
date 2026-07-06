@@ -4,12 +4,13 @@ import Container from '../common/Container';
 import Badge from '../common/Badge';
 import { usePortfolio } from '../../hooks/usePortfolio';
 import { mediaUrl } from '../../lib/mediaUrl';
+import { pdfUrl } from '../../lib/pdfUrl';
 
 export default function ExperienceHero() {
   const { data: portfolio } = usePortfolio();
   const profileImageUrl = mediaUrl(portfolio?.profileImage?.fileUrl);
   const resumeUrl = portfolio?.resume
-    ? (mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf')
+    ? pdfUrl(mediaUrl(portfolio.resume.fileUrl) ?? '/resume.pdf')
     : '/resume.pdf';
 
   return (
@@ -36,10 +37,10 @@ export default function ExperienceHero() {
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <button
-              onClick={() => window.open(resumeUrl, '_blank')}
+              onClick={() => window.open(resumeUrl, '_blank', 'noopener,noreferrer')}
               className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[var(--color-accent-blue)] to-[var(--color-accent-purple)] px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
             >
-              Download Resume
+              View Resume
             </button>
           </div>
         </motion.div>
