@@ -10,8 +10,6 @@ const statusStyles: Record<Project['status'], string> = {
 };
 
 export default function ProjectCard({ project }: { project: Project }) {
-  const navigate = useNavigate();
-
   const openUrl = (e: React.MouseEvent, url?: string) => {
     e.stopPropagation(); // don't navigate to detail page when clicking a link button
     if (url && url !== '#') window.open(url, '_blank', 'noopener,noreferrer');
