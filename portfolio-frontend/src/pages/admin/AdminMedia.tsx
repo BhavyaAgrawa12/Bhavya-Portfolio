@@ -153,20 +153,6 @@ export default function AdminMedia() {
   const [folder, setFolder] = useState<Folder>('temp');
   const [assigningId, setAssigningId] = useState<string | null>(null);
 
-  const uploadMutation = useMutation({
-    mutationFn: (file: File) => uploadMedia(file, folder),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['media'] });
-      showToast('File uploaded successfully.', 'success');
-    },
-    onError: (err: unknown) => {
-      const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message ??
-        'Upload failed.';
-      showToast(msg, 'error');
-    },
-  });
-
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteMedia(id),
     onSuccess: () => {
@@ -201,11 +187,38 @@ export default function AdminMedia() {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    uploadMutation.mutate(file);
-    e.target.value = '';
+  const [uploadProgress, setUploadProgress] = useState('');
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    e.target.value = ''; // reset so same files can be selected again
+
+    let succeeded = 0;
+    let failed = 0;
+
+    for (let i = 0; i < files.length; i++) {
+      setUploadProgress(`Uploading ${i + 1} / ${files.length}…`);
+      try {
+        await uploadMedia(files[i], folder);
+        succeeded++;
+      } catch {
+        failed++;
+        showToast(`Failed to upload "${files[i].name}"`, 'error');
+      }
+    }
+
+    setUploadProgress('');
+    await qc.invalidateQueries({ queryKey: ['media'] });
+
+    if (succeeded > 0) {
+      showToast(
+        succeeded === 1
+          ? 'File uploaded successfully.'
+          : `${succeeded} files uploaded successfully.${failed > 0 ? ` ${failed} failed.` : ''}`,
+        'success',
+      );
+    }
   };
 
   if (isLoading) return <LoadingSpinner />;
@@ -225,17 +238,17 @@ export default function AdminMedia() {
               onChange={v => setFolder(v as Folder)}
               className="w-44"
             />
-            <input ref={fileRef} type="file"
+            <input ref={fileRef} type="file" multiple
               accept="image/jpeg,image/png,image/jpg,image/webp,application/pdf"
               className="hidden" onChange={handleFileChange}
             />
             <button
               onClick={() => fileRef.current?.click()}
-              disabled={uploadMutation.isPending}
+              disabled={!!uploadProgress}
               className="flex items-center gap-2 rounded-xl bg-[var(--color-accent-blue)] px-4 py-2.5 text-sm font-semibold text-[var(--color-bg-base)] hover:opacity-90 disabled:opacity-50"
             >
               <Upload size={16} />
-              {uploadMutation.isPending ? 'Uploading…' : 'Upload File'}
+              {uploadProgress || 'Upload Files'}
             </button>
           </div>
         }
