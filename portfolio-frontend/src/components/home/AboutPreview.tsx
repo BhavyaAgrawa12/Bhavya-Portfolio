@@ -15,7 +15,6 @@ const stats = [
 ];
 
 export default function AboutPreview() {
-  const navigate = useNavigate();
   const { data: portfolio } = usePortfolio();
 
   const profileImageUrl = mediaUrl(portfolio?.profileImage?.fileUrl);

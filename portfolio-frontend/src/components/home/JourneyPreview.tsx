@@ -10,7 +10,6 @@ import type { TimelineEvent } from '../../types/portfolio';
 import { fadeUp, staggerContainer, staggerItem, VIEWPORT } from '../../lib/motion';
 
 export default function JourneyPreview() {
-  const navigate = useNavigate();
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
