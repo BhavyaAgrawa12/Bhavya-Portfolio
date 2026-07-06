@@ -1,7 +1,6 @@
 import { fetchAllInternships } from '../api/internships.api';
 import type { InternshipEntry } from '../types/portfolio';
-
-const BASE = (import.meta.env.VITE_UPLOADS_BASE_URL as string) ?? '';
+import { mediaUrl } from '../lib/mediaUrl';
 
 export async function getInternships(): Promise<InternshipEntry[]> {
   const data = await fetchAllInternships();
@@ -17,6 +16,7 @@ export async function getInternships(): Promise<InternshipEntry[]> {
     responsibilities: i.description
       ? i.description.split('\n').filter(Boolean)
       : [],
-    logo: i.logo ? `${BASE}${i.logo.fileUrl}` : undefined,
+    // mediaUrl() returns Cloudinary URLs unchanged; handles legacy /uploads/ paths
+    logo: mediaUrl(i.logo?.fileUrl),
   }));
 }

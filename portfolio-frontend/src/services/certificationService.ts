@@ -1,7 +1,6 @@
 import { fetchAllCertifications } from '../api/certifications.api';
 import type { CertificationEntry } from '../types/portfolio';
-
-const BASE = (import.meta.env.VITE_UPLOADS_BASE_URL as string) ?? '';
+import { mediaUrl } from '../lib/mediaUrl';
 
 export async function getCertifications(): Promise<CertificationEntry[]> {
   const data = await fetchAllCertifications();
@@ -10,13 +9,11 @@ export async function getCertifications(): Promise<CertificationEntry[]> {
     title: c.title,
     issuer: c.issuer,
     status: c.issueDate
-      ? new Date(c.issueDate).toLocaleDateString('en-US', {
-          month: 'short',
-          year: 'numeric',
-        })
+      ? new Date(c.issueDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
       : undefined,
     icon: 'default' as const,
-    image: c.certificateImage ? `${BASE}${c.certificateImage.fileUrl}` : undefined,
+    // mediaUrl() returns Cloudinary URLs unchanged; handles legacy /uploads/ paths
+    image: mediaUrl(c.certificateImage?.fileUrl),
     credentialUrl: c.credentialUrl ?? undefined,
     issueDate: c.issueDate ?? undefined,
   }));
