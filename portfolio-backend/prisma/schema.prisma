@@ -8,30 +8,30 @@ datasource db {
 }
 
 model achievement {
-  id           String    @id
+  id           String    @id @default(cuid())
   title        String
   description  String?
   date         DateTime?
   imageId      String?
   displayOrder Int       @default(0)
   createdAt    DateTime  @default(now())
-  updatedAt    DateTime
+  updatedAt    DateTime  @updatedAt
   media        media?    @relation(fields: [imageId], references: [id], map: "Achievement_imageId_fkey")
 
   @@index([imageId], map: "Achievement_imageId_fkey")
 }
 
 model admin {
-  id        String   @id
+  id        String   @id @default(cuid())
   username  String   @unique(map: "Admin_username_key")
   email     String   @unique(map: "Admin_email_key")
   password  String
   createdAt DateTime @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model certification {
-  id                 String    @id
+  id                 String    @id @default(cuid())
   title              String
   issuer             String
   credentialId       String?
@@ -41,14 +41,14 @@ model certification {
   certificateImageId String?
   displayOrder       Int       @default(0)
   createdAt          DateTime  @default(now())
-  updatedAt          DateTime
+  updatedAt          DateTime  @updatedAt
   media              media?    @relation(fields: [certificateImageId], references: [id], map: "Certification_certificateImageId_fkey")
 
   @@index([certificateImageId], map: "Certification_certificateImageId_idx")
 }
 
 model contactmessage {
-  id        String   @id
+  id        String   @id @default(cuid())
   name      String
   email     String
   phone     String?
@@ -61,7 +61,7 @@ model contactmessage {
 }
 
 model education {
-  id           String    @id
+  id           String    @id @default(cuid())
   institution  String
   degree       String
   field        String?
@@ -72,11 +72,11 @@ model education {
   endDate      DateTime?
   displayOrder Int       @default(0)
   createdAt    DateTime  @default(now())
-  updatedAt    DateTime
+  updatedAt    DateTime  @updatedAt
 }
 
 model internship {
-  id             String                    @id
+  id             String                    @id @default(cuid())
   company        String
   position       String
   employmentType internship_employmentType
@@ -88,21 +88,21 @@ model internship {
   endDate        DateTime?
   displayOrder   Int                       @default(0)
   createdAt      DateTime                  @default(now())
-  updatedAt      DateTime
+  updatedAt      DateTime                  @updatedAt
   media          media?                    @relation(fields: [logoId], references: [id], map: "Internship_logoId_fkey")
 
   @@index([logoId], map: "Internship_logoId_idx")
 }
 
 model media {
-  id                                          String          @id
+  id                                          String          @id @default(cuid())
   fileName                                    String
   fileUrl                                     String
   mimeType                                    String
   fileSize                                    Int
   type                                        media_type
   createdAt                                   DateTime        @default(now())
-  updatedAt                                   DateTime
+  updatedAt                                   DateTime        @updatedAt
   achievement                                 achievement[]
   certification                               certification[]
   internship                                  internship[]
@@ -135,7 +135,7 @@ model portfolio {
   profileImageId                          String?
   workspaceImageId                        String?
   createdAt                               DateTime @default(now())
-  updatedAt                               DateTime
+  updatedAt                               DateTime @updatedAt
   media_portfolio_profileImageIdTomedia   media?   @relation("portfolio_profileImageIdTomedia", fields: [profileImageId], references: [id], map: "Portfolio_profileImageId_fkey")
   media_portfolio_resumeIdTomedia         media?   @relation("portfolio_resumeIdTomedia", fields: [resumeId], references: [id], map: "Portfolio_resumeId_fkey")
   media_portfolio_workspaceImageIdTomedia media?   @relation("portfolio_workspaceImageIdTomedia", fields: [workspaceImageId], references: [id], map: "Portfolio_workspaceImageId_fkey")
@@ -146,7 +146,7 @@ model portfolio {
 }
 
 model project {
-  id                String              @id
+  id                String              @id @default(cuid())
   title             String
   slug              String              @unique(map: "Project_slug_key")
   category          project_category
@@ -162,7 +162,7 @@ model project {
   learnings         Json?
   displayOrder      Int                 @default(0)
   createdAt         DateTime            @default(now())
-  updatedAt         DateTime
+  updatedAt         DateTime            @updatedAt
   media             media?              @relation(fields: [thumbnailId], references: [id], map: "Project_thumbnailId_fkey")
   projectimage      projectimage[]
   projecttechnology projecttechnology[]
@@ -175,7 +175,7 @@ model project {
 }
 
 model projectimage {
-  id           String  @id
+  id           String  @id @default(cuid())
   projectId    String
   mediaId      String
   displayOrder Int     @default(0)
@@ -197,18 +197,18 @@ model projecttechnology {
 }
 
 model skill {
-  id           String         @id
+  id           String         @id @default(cuid())
   name         String
   category     skill_category
   iconName     String?
   proficiency  Int?
   displayOrder Int            @default(0)
   createdAt    DateTime       @default(now())
-  updatedAt    DateTime
+  updatedAt    DateTime       @updatedAt
 }
 
 model technology {
-  id                String              @id
+  id                String              @id @default(cuid())
   name              String              @unique(map: "Technology_name_key")
   iconName          String?
   projecttechnology projecttechnology[]
