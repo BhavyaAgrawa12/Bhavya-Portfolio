@@ -6,6 +6,7 @@ import Badge from '../common/Badge';
 import Button from '../common/Button';
 import { usePortfolio } from '../../hooks/usePortfolio';
 import { mediaUrl } from '../../lib/mediaUrl';
+import { pdfUrl } from '../../lib/pdfUrl';
 
 export default function Hero() {
   const { data: portfolio } = usePortfolio();
