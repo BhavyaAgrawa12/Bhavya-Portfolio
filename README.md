@@ -1,43 +1,145 @@
-# 🚀 Full Stack Developer Portfolio
 
-A modern, responsive, and fully dynamic developer portfolio built with a **React frontend** and **Node.js backend**. The portfolio includes a secure admin dashboard that allows all portfolio content to be managed without modifying the source code.
+# 🚀 Bhavya Portfolio CMS
 
-> Designed to showcase projects, skills, certifications, achievements, work experience, and more through an intuitive content management system.
+<div align="center">
+
+### Modern Full Stack Developer Portfolio with a Secure Admin Dashboard
+
+A production-ready portfolio platform built with **React**, **Node.js**, **Express.js**, **MySQL**, **Prisma ORM**, and **Cloudinary**.
+
+[![Live Demo](https://img.shields.io/badge/🌐%20Live%20Demo-bhavyafolio.vercel.app-blue?style=for-the-badge)](https://bhavyafolio.vercel.app/)
+[![Backend](https://img.shields.io/badge/API-Render-success?style=for-the-badge)](https://bhavya-portfolio-xyoq.onrender.com)
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github)](https://github.com/BhavyaAgrawa12/Bhavya-Portfolio)
+
+![React](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=flat-square&logo=express&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=flat-square&logo=prisma&logoColor=white)
+![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?style=flat-square&logo=cloudinary&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-Authentication-orange?style=flat-square)
+
+</div>
 
 ---
 
-## ✨ Features
+## 📖 Overview
 
-### 🌐 Public Portfolio
+**Bhavya Portfolio CMS** is a full-stack portfolio management system that combines a modern developer portfolio with a secure content management system.
 
-* Modern and responsive UI
-* Smooth navigation and clean user experience
-* Dynamic content loading
-* Projects showcase
-* Skills section
-* Experience timeline
-* Education section
-* Certifications
-* Achievements
-* Contact section
-* Resume download
-* Mobile-friendly design
+Instead of editing source code whenever portfolio information changes, every section can be managed through a protected admin dashboard. The platform supports dynamic updates for projects, skills, education, experience, certifications, achievements, media assets, and resume management.
 
-### 🔐 Admin Dashboard
+---
 
-* Secure authentication
-* Dashboard overview
-* Manage Projects
-* Manage Skills
-* Manage Experience
-* Manage Education
-* Manage Certifications
-* Manage Achievements
-* Manage Personal Information
-* Upload Images
-* Resume Management
-* Media Management
-* Real-time content updates
+## 🎯 Why This Project?
+
+Most portfolio websites are completely static. This project was built to solve that limitation by providing a secure CMS where content can be managed through an intuitive dashboard while visitors always see the latest portfolio information.
+
+---
+
+## 🌐 Live Links
+
+| Service | Link |
+|---------|------|
+| Portfolio | https://bhavyafolio.vercel.app/ |
+| Backend API | https://bhavya-portfolio-xyoq.onrender.com |
+| GitHub Repository | https://github.com/BhavyaAgrawa12/Bhavya-Portfolio |
+
+---
+
+# ✨ Features
+
+## Public Portfolio
+
+- Responsive Design
+- Dynamic Portfolio Content
+- About Section
+- Skills Showcase
+- Experience Timeline
+- Education
+- Projects
+- Certifications
+- Achievements
+- Resume Download
+- Contact Section
+- Fast Loading UI
+
+## Admin Dashboard
+
+- Secure Login
+- JWT Authentication
+- Manage Personal Information
+- Manage Projects
+- Manage Skills
+- Manage Experience
+- Manage Education
+- Manage Certifications
+- Manage Achievements
+- Upload Images
+- Resume Management
+- Dynamic Content Updates
+
+---
+
+# 🔒 Admin Access
+
+The project includes a dedicated **Admin Dashboard** for managing portfolio content.
+
+For security reasons, **the admin dashboard is NOT publicly accessible**.
+
+Only authorized users with valid authentication credentials can access administrative routes. All protected endpoints require JWT-based authentication.
+
+---
+
+# 🏗 Architecture
+
+| Layer | Technology |
+|--------|------------|
+| Frontend | React + Vite |
+| Backend | Node.js + Express.js |
+| Database | Railway MySQL |
+| ORM | Prisma ORM |
+| Authentication | JWT |
+| Media Storage | Cloudinary |
+| Frontend Hosting | Vercel |
+| Backend Hosting | Render |
+
+---
+
+# ☁ Infrastructure
+
+### Database
+
+All structured application data is stored in a **MySQL database hosted on Railway**.
+
+Managed data includes:
+
+- Personal Information
+- Projects
+- Skills
+- Experience
+- Education
+- Certifications
+- Achievements
+- Resume Metadata
+
+Prisma ORM is used for database access and schema management.
+
+### Media Storage
+
+All uploaded assets are stored securely using **Cloudinary**.
+
+Media includes:
+
+- Profile Images
+- Project Images
+- Skill Icons
+- Certification Images
+- Achievement Images
+- Resume Files
+
+Cloudinary provides optimized storage and fast media delivery.
 
 ---
 
@@ -45,42 +147,35 @@ A modern, responsive, and fully dynamic developer portfolio built with a **React
 
 ### Frontend
 
-* React
-* Vite
-* React Router
-* JavaScript (ES6+)
-* CSS3
+- React
+- Vite
+- React Router
+- JavaScript
+- CSS
 
 ### Backend
 
-* Node.js
-* Express.js
+- Node.js
+- Express.js
 
 ### Database
 
-* PostgreSQL
-* Prisma ORM
+- MySQL
+- Prisma ORM
 
-### Authentication
+### Cloud
 
-* JWT Authentication
-* Protected Routes
-
-### Media Storage
-
-* Cloudinary
-
-### Deployment
-
-* Vercel (Frontend)
-* Render (Backend)
+- Railway
+- Render
+- Vercel
+- Cloudinary
 
 ---
 
-# 📂 Project Structure
+# 📁 Project Structure
 
 ```text
-Portfolio/
+Bhavya-Portfolio/
 │
 ├── frontend/
 │   ├── src/
@@ -89,9 +184,10 @@ Portfolio/
 │
 ├── backend/
 │   ├── prisma/
-│   ├── routes/
 │   ├── controllers/
 │   ├── middleware/
+│   ├── routes/
+│   ├── services/
 │   ├── utils/
 │   └── package.json
 │
@@ -100,39 +196,28 @@ Portfolio/
 
 ---
 
-# 🚀 Getting Started
-
-## 1. Clone the Repository
+# ⚙ Installation
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
+git clone https://github.com/BhavyaAgrawa12/Bhavya-Portfolio.git
+cd Bhavya-Portfolio
 ```
 
-```bash
-cd YOUR_REPOSITORY
-```
-
----
-
-## 2. Install Dependencies
-
-### Frontend
+Install dependencies:
 
 ```bash
 cd frontend
 npm install
 ```
 
-### Backend
-
 ```bash
-cd backend
+cd ../backend
 npm install
 ```
 
 ---
 
-## 3. Environment Variables
+# 🔑 Environment Variables
 
 Create a `.env` file inside the backend folder.
 
@@ -152,19 +237,24 @@ PORT=5000
 
 ---
 
-## 4. Run Prisma
+# 🗃 Prisma
 
 ```bash
 npx prisma generate
-```
-
-```bash
 npx prisma migrate deploy
 ```
 
 ---
 
-## 5. Start the Backend
+# ▶ Running Locally
+
+Backend
+
+```bash
+npm run dev
+```
+
+Frontend
 
 ```bash
 npm run dev
@@ -172,63 +262,37 @@ npm run dev
 
 ---
 
-## 6. Start the Frontend
+# 🔐 Security
 
-```bash
-npm run dev
-```
-
----
-
-# 📸 Screenshots
-
-Add screenshots of:
-
-* Home Page
-* About Section
-* Projects
-* Skills
-* Experience
-* Admin Dashboard
-* Media Manager
+- JWT Authentication
+- Protected Routes
+- Secure API Access
+- Cloud-based Media Storage
+- Server-side Validation
 
 ---
 
-# 📈 Highlights
+# 🚀 Highlights
 
-* Full Stack Architecture
-* Secure Authentication
-* RESTful API
-* Cloud Media Storage
-* Dynamic Content Management
-* Responsive Design
-* Production Ready
-* Modular Codebase
-* Clean UI/UX
-
----
-
-# 🔒 Admin Features
-
-* Login Authentication
-* CRUD Operations
-* Image Uploads
-* Resume Upload & Management
-* Portfolio Content Management
-* Secure API Access
+- Full Stack Architecture
+- Dynamic Portfolio CMS
+- Railway MySQL Database
+- Prisma ORM
+- Cloudinary Integration
+- RESTful APIs
+- Responsive UI
+- Production Deployment
 
 ---
 
-# 📌 Future Improvements
+# 🛣 Roadmap
 
-* Dark/Light Theme Toggle
-* Analytics Dashboard
-* Visitor Statistics
-* Email Notifications
-* Blog Management
-* Multi-language Support
-* Advanced SEO
-* Performance Optimizations
+- Visitor Analytics
+- Blog Module
+- Theme Switcher
+- SEO Improvements
+- Email Notifications
+- Performance Optimizations
 
 ---
 
@@ -236,7 +300,7 @@ Add screenshots of:
 
 Contributions, issues, and feature requests are welcome.
 
-Feel free to fork the repository and submit a pull request.
+Please fork the repository and open a Pull Request for improvements.
 
 ---
 
@@ -250,8 +314,7 @@ This project is licensed under the MIT License.
 
 **Bhavya Agrawal**
 
-* 💼 Full Stack Developer
-* 🎓 Computer Science Student
-* 🌱 Passionate about Backend Development and Scalable Web Applications
+- Portfolio: https://bhavyafolio.vercel.app/
+- GitHub: https://github.com/BhavyaAgrawa12
 
-If you found this project helpful, consider giving it a ⭐ on GitHub!
+If you like this project, consider giving it a ⭐ on GitHub.
