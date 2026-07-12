@@ -25,6 +25,14 @@ import contactRoutes from "../modules/contact/contact.routes.js"
 import dashboardRoutes from "../modules/dashboard/dashboard.routes.js"
 
 const router = Router();
+
+router.get("/health", (_req, res) => {
+  res.json({
+    success: true,
+    status: "Server Running",
+  });
+});
+
 router.use("/auth",authRoutes);
 
 router.use("/media",mediaRoutes);

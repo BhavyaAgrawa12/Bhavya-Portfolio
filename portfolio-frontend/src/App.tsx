@@ -10,6 +10,7 @@ import Contact from './pages/Contact';
 import NotFound from './pages/NotFound';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import ProtectedRoute from './components/admin/ProtectedRoute';
+import StartupLoader from './components/common/StartupLoader';
 
 // Lazy-load admin pages — they're only needed when the admin visits /admin/*
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin'));
@@ -30,7 +31,8 @@ const AdminFallback = <div className="flex h-screen items-center justify-center"
 
 export default function App() {
   return (
-    <Routes>
+    <StartupLoader>
+      <Routes>
       {/* Public portfolio routes */}
       <Route
         path="/"
@@ -123,6 +125,7 @@ export default function App() {
           </Layout>
         }
       />
-    </Routes>
+      </Routes>
+    </StartupLoader>
   );
 }
