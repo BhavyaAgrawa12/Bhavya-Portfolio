@@ -135,7 +135,9 @@ export default function AdminMessages() {
                 <Trash2 size={14} /> Delete
               </button>
               <a
-                href={`mailto:${selected.email}?subject=Re: ${selected.subject ?? ''}`}
+                href={`mailto:${selected.email}?subject=${encodeURIComponent('🚀 Project Enquiry | Bhavya Portfolio Response')}&body=${encodeURIComponent(
+                  `\n\n---\nOriginal Message:\nFrom: ${selected.name} (${selected.email})\nSent: ${new Date(selected.createdAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}\nSubject: ${selected.subject || 'None'}\n\n${selected.message}`
+                )}`}
                 className="rounded-xl bg-[var(--color-accent-blue)] px-5 py-2.5 text-sm font-semibold text-[var(--color-bg-base)] hover:opacity-90"
               >
                 Reply
