@@ -25,10 +25,10 @@ const initializeSMTP = () => {
 export const sendContactNotificationEmail = async (details) => {
   const { name, email: senderEmail, subject: clientSubject, message } = details;
 
-  // Format Subject: Portfolio Enquiry - clientSubject (if present) (newlines are rejected by Resend API)
+  // Format Subject: 🚀 Project Enquiry | Bhavya Portfolio - clientSubject (if present) (newlines are rejected by Resend API)
   const finalSubject = clientSubject 
-    ? `Portfolio Enquiry - ${clientSubject}`
-    : "Portfolio Enquiry";
+    ? `🚀 Project Enquiry | Bhavya Portfolio - ${clientSubject}`
+    : "🚀 Project Enquiry | Bhavya Portfolio";
 
   const recipient = env.SMTP_USER || "agrawalbhavya563@gmail.com";
 
