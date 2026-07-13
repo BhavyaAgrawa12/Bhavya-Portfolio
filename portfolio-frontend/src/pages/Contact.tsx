@@ -37,7 +37,7 @@ export default function Contact() {
     : '/resume.pdf';
 
   const contactCards = [
-    { icon: Mail, label: 'Email', value: email, href: `mailto:${email}` },
+    { icon: Mail, label: 'Email', value: email, href: `mailto:${email}?subject=%F0%9F%9A%80%20Project%20Enquiry%20%7C%20Bhavya%20Portfolio` },
     { icon: Github, label: 'GitHub', value: 'github.com/BhavyaAgrawa12', href: github },
     { icon: Linkedin, label: 'LinkedIn', value: 'LinkedIn Profile', href: linkedin },
     { icon: FileText, label: 'Resume', value: 'View Resume', href: resumeUrl },
@@ -96,7 +96,7 @@ export default function Contact() {
           <Button
             variant="primary"
             className="mt-6"
-            onClick={() => (window.location.href = `mailto:${email}`)}
+            onClick={() => (window.location.href = `mailto:${email}?subject=%F0%9F%9A%80%20Project%20Enquiry%20%7C%20Bhavya%20Portfolio`)}
           >
             Start a Conversation
           </Button>

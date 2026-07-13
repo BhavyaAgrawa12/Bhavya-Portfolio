@@ -25,7 +25,7 @@ export default function Hero() {
     },
     portfolio?.email && {
       icon: Mail,
-      href: `mailto:${portfolio.email}`,
+      href: `mailto:${portfolio.email}?subject=%F0%9F%9A%80%20Project%20Enquiry%20%7C%20Bhavya%20Portfolio`,
       label: 'Email',
     },
   ].filter(Boolean) as { icon: typeof Github; href: string; label: string }[];
@@ -34,7 +34,7 @@ export default function Hero() {
   const fallbackSocials = [
     { icon: Github, href: 'https://github.com/BhavyaAgrawa12', label: 'GitHub' },
     { icon: Linkedin, href: 'https://www.linkedin.com/in/bhavya-agrawal-212052291', label: 'LinkedIn' },
-    { icon: Mail, href: 'mailto:agrawalbhavya563@gmail.com', label: 'Email' },
+    { icon: Mail, href: 'mailto:agrawalbhavya563@gmail.com?subject=%F0%9F%9A%80%20Project%20Enquiry%20%7C%20Bhavya%20Portfolio', label: 'Email' },
   ];
 
   const displaySocials = socials.length > 0 ? socials : fallbackSocials;

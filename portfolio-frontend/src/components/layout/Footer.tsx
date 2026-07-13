@@ -15,7 +15,7 @@ export default function Footer() {
   const socials = [
     portfolio?.github && { icon: Github, href: portfolio.github, label: 'GitHub' },
     portfolio?.linkedin && { icon: Linkedin, href: portfolio.linkedin, label: 'LinkedIn' },
-    portfolio?.email && { icon: Mail, href: `mailto:${portfolio.email}`, label: 'Email' },
+    portfolio?.email && { icon: Mail, href: `mailto:${portfolio.email}?subject=%F0%9F%9A%80%20Project%20Enquiry%20%7C%20Bhavya%20Portfolio`, label: 'Email' },
     portfolio?.x && { icon: Twitter, href: portfolio.x, label: 'X / Twitter' },
   ].filter(Boolean) as { icon: typeof Github; href: string; label: string }[];
 
@@ -25,7 +25,7 @@ export default function Footer() {
     : [
         { icon: Github, href: 'https://github.com/BhavyaAgrawa12', label: 'GitHub' },
         { icon: Linkedin, href: 'https://www.linkedin.com/in/bhavya-agrawal-212052291', label: 'LinkedIn' },
-        { icon: Mail, href: 'mailto:agrawalbhavya563@gmail.com', label: 'Email' },
+        { icon: Mail, href: 'mailto:agrawalbhavya563@gmail.com?subject=%F0%9F%9A%80%20Project%20Enquiry%20%7C%20Bhavya%20Portfolio', label: 'Email' },
       ];
 
   const footerText =
