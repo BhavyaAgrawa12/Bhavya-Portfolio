@@ -75,7 +75,7 @@ export default function CTASection({
               <Button
                 variant="primary"
                 className="group"
-                onClick={() => { window.location.href = `mailto:${email}?subject=%F0%9F%9A%80%20Project%20Enquiry%20%7C%20Bhavya%20Portfolio`; }}
+                onClick={() => { window.location.href = `mailto:${email}?subject=🚀 Project Enquiry | Bhavya Portfolio`; }}
               >
                 Contact Me
                 <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">→</span>
