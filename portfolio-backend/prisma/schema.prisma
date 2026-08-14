@@ -19,6 +19,7 @@ model achievement {
   media        media?    @relation(fields: [imageId], references: [id], map: "Achievement_imageId_fkey")
 
   @@index([imageId], map: "Achievement_imageId_fkey")
+  @@map("Achievement")
 }
 
 model admin {
@@ -28,6 +29,8 @@ model admin {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
+  @@map("Admin")
 }
 
 model certification {
@@ -45,6 +48,7 @@ model certification {
   media              media?    @relation(fields: [certificateImageId], references: [id], map: "Certification_certificateImageId_fkey")
 
   @@index([certificateImageId], map: "Certification_certificateImageId_idx")
+  @@map("Certification")
 }
 
 model contactmessage {
@@ -58,6 +62,7 @@ model contactmessage {
   createdAt DateTime @default(now())
 
   @@index([isRead], map: "ContactMessage_isRead_idx")
+  @@map("ContactMessage")
 }
 
 model education {
@@ -73,6 +78,8 @@ model education {
   displayOrder Int       @default(0)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
+
+  @@map("Education")
 }
 
 model internship {
@@ -92,6 +99,7 @@ model internship {
   media          media?                    @relation(fields: [logoId], references: [id], map: "Internship_logoId_fkey")
 
   @@index([logoId], map: "Internship_logoId_idx")
+  @@map("Internship")
 }
 
 model media {
@@ -111,6 +119,8 @@ model media {
   portfolio_portfolio_workspaceImageIdTomedia portfolio[]     @relation("portfolio_workspaceImageIdTomedia")
   project                                     project[]
   projectimage                                projectimage[]
+
+  @@map("Media")
 }
 
 model portfolio {
@@ -143,6 +153,7 @@ model portfolio {
   @@index([profileImageId], map: "Portfolio_profileImageId_idx")
   @@index([resumeId], map: "Portfolio_resumeId_idx")
   @@index([workspaceImageId], map: "Portfolio_workspaceImageId_idx")
+  @@map("Portfolio")
 }
 
 model project {
@@ -172,6 +183,7 @@ model project {
   @@index([slug], map: "Project_slug_idx")
   @@index([status], map: "Project_status_idx")
   @@index([thumbnailId], map: "Project_thumbnailId_fkey")
+  @@map("Project")
 }
 
 model projectimage {
@@ -184,6 +196,7 @@ model projectimage {
 
   @@index([mediaId], map: "ProjectImage_mediaId_fkey")
   @@index([projectId], map: "ProjectImage_projectId_idx")
+  @@map("ProjectImage")
 }
 
 model projecttechnology {
@@ -194,6 +207,7 @@ model projecttechnology {
 
   @@id([projectId, technologyId])
   @@index([technologyId], map: "ProjectTechnology_technologyId_fkey")
+  @@map("ProjectTechnology")
 }
 
 model skill {
@@ -205,6 +219,8 @@ model skill {
   displayOrder Int            @default(0)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
+
+  @@map("Skill")
 }
 
 model technology {
@@ -212,6 +228,8 @@ model technology {
   name              String              @unique(map: "Technology_name_key")
   iconName          String?
   projecttechnology projecttechnology[]
+
+  @@map("Technology")
 }
 
 enum skill_category {
